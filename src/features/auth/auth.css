@@ -1,0 +1,94 @@
+.auth-screen {
+  width: min(100%, 400px);
+  padding: 24px 16px;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.auth-card {
+  width: 100%;
+  background: var(--mochi);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px var(--shadow);
+  padding: 22px 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.auth-intro {
+  margin: 0;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.auth-field {
+  display: grid;
+  gap: 4px;
+  font-size: 0.95rem;
+}
+
+.auth-field input {
+  font: inherit;
+  font-size: 1rem; /* 16px+ stops iOS zooming into the field */
+  color: var(--ink);
+  background: var(--cream);
+  border: 2px solid var(--mochi-shade);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  outline: none;
+}
+
+.auth-field input:focus-visible {
+  border-color: var(--accent);
+}
+
+.auth-message {
+  margin: 0;
+  color: var(--accent-ink);
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.auth-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: var(--accent);
+  color: var(--mochi);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-squish);
+}
+
+.auth-button:active {
+  transform: scale(0.96);
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.auth-link-button {
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-button {
+    transition: none;
+  }
+}

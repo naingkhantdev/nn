@@ -1,14 +1,43 @@
-import { copy } from './copy/copy'
-import { Mochi } from './features/mochi/Mochi'
+import { useState } from 'react'
+import type { AuthRepository } from './features/auth/authRepository'
+import { AppRoutes } from './features/auth/AppRoutes'
+import { InstallGuide } from './features/install/InstallGuide'
+import {
+  adviceFor,
+  hasSeenInstallGuide,
+  markInstallGuideSeen,
+  parseIosVersion,
+  type InstallEnv,
+} from './platform/install'
 
-function App() {
+interface AppProps {
+  repo: AuthRepository
+  installEnv: InstallEnv
+}
+
+function App({ repo, installEnv }: AppProps) {
+  const advice = adviceFor(installEnv)
+  const [guideSeen, setGuideSeen] = useState(hasSeenInstallGuide)
+
+  // In-app browsers always get the guide; Safari can choose to carry on.
+  const guide =
+    advice === 'inAppBrowser' || (advice === 'iosSafariAddToHome' && !guideSeen) ? advice : null
+
   return (
     <main data-testid="app-root" className="app-root">
-      <div style={{ display: 'grid', justifyItems: 'center', gap: 8 }}>
-        <Mochi expression="happy" size={180} />
-        <h1 style={{ margin: 0 }}>{copy.appName}</h1>
-        <p style={{ margin: 0 }}>{copy.loading}</p>
-      </div>
+      {guide ? (
+        <InstallGuide
+          advice={guide}
+          iosVersion={parseIosVersion(installEnv.userAgent)}
+          url={installEnv.url}
+          onContinue={() => {
+            markInstallGuideSeen()
+            setGuideSeen(true)
+          }}
+        />
+      ) : (
+        <AppRoutes repo={repo} />
+      )}
     </main>
   )
 }

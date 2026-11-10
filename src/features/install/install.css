@@ -1,0 +1,42 @@
+.install-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  counter-reset: step;
+}
+
+.install-steps li {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+  gap: 10px;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+
+.install-steps li > svg {
+  justify-self: center;
+}
+
+.install-url {
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  background: var(--cream);
+  border: 2px dashed var(--mochi-shade);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.install-note {
+  margin: 0;
+  background: var(--foam);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}

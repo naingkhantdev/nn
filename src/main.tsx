@@ -5,11 +5,19 @@ import '@fontsource/noto-sans-myanmar/700.css'
 import '@fontsource/baloo-2/600.css'
 import '@fontsource/baloo-2/700.css'
 import './index.css'
+import { BrowserRouter } from 'react-router'
 import App from './App.tsx'
+import { auth, db } from './core/firebase'
+import { createFirebaseAuthRepository } from './features/auth/authRepository'
+import { readInstallEnv } from './platform/install'
+
+const authRepository = createFirebaseAuthRepository(auth, db)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <App repo={authRepository} installEnv={readInstallEnv()} />
+    </BrowserRouter>
   </StrictMode>,
 )
 
