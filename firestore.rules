@@ -1,0 +1,42 @@
+rules_version = '2';
+
+// Mochi Island: exactly two members, listed in config/members (console-only).
+// Everything not matched below is denied.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isMember() {
+      return request.auth != null
+        && request.auth.uid in get(/databases/$(database)/documents/config/members).data.uids;
+    }
+
+    function isSelf(uid) {
+      return isMember() && request.auth.uid == uid;
+    }
+
+    // Myanmar day number (UTC+6:30), decided by the server clock.
+    // Must match myanmarDayNumber in src/core/time.ts.
+    function myanmarDay() {
+      return math.floor((request.time.toMillis() + 23400000) / 86400000);
+    }
+
+    function onlyKeys(keys) {
+      return request.resource.data.keys().hasOnly(keys);
+    }
+
+    match /config/{doc} {
+      allow read: if isMember();
+      allow write: if false;
+    }
+
+    match /profiles/{uid} {
+      allow read: if isMember();
+      allow create, update: if isSelf(uid)
+        && onlyKeys(['displayName', 'phraseChosen'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 40
+        && request.resource.data.phraseChosen is bool;
+      allow delete: if isSelf(uid);
+    }
+  }
+}
