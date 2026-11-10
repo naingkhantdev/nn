@@ -66,8 +66,25 @@ export const copy = {
     continueHere: 'Carry on here for now',
   },
 
-  // Placeholder home until the island is built (Task 8).
+  // Island home.
   island: {
-    comingSoon: 'The island is on its way...',
+    settings: 'Settings',
+    back: 'Back to the island',
+    stillBuildingTitle: 'Still being built',
+    stillBuildingBody: 'Mochi is still building this part of the island. Come and peek again another day!',
+    stillBuildingOk: 'Okay!',
+    roomComingSoon: 'Mochi is getting this place ready...',
+  },
+
+  // Tappable places on the island (also their accessible labels).
+  places: {
+    mochiHouse: "Mochi's house",
+    starJar: 'Star Jar',
+    feelings: 'How I feel now',
+    sulkCloud: 'Sulk cloud',
+    snailPost: 'Snail Post',
+    lantern: 'Lantern',
+    garden: 'Garden',
+    bottle: 'Message bottle',
   },
 } as const

@@ -1,0 +1,160 @@
+/* Fill the screen. The scene sits at the bottom, so on tall phones the
+   extra space becomes sky above it, which matches seamlessly. */
+.island-screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: end center;
+  overflow: hidden;
+  background: var(--sky);
+}
+
+/* Keeps the 360x640 scene ratio and fits inside the screen. */
+.island-frame {
+  position: relative;
+  width: min(100vw, calc(100dvh * 9 / 16));
+  aspect-ratio: 9 / 16;
+}
+
+.island-scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.island-place,
+.island-mochi {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.island-place {
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.island-place:focus-visible {
+  outline: 3px dashed var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.island-place:active {
+  background: rgb(255 255 255 / 0.25);
+}
+
+.island-mochi {
+  pointer-events: none;
+}
+
+.island-settings {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 10px);
+  right: calc(env(safe-area-inset-right) + 10px);
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.55);
+  cursor: pointer;
+}
+
+/* Gentle life: transform and opacity only. */
+.island-wave-back {
+  animation: island-wave 6s linear infinite;
+}
+.island-wave-front {
+  animation: island-wave 4.5s linear infinite reverse;
+}
+.island-cloud-a {
+  animation: island-drift 22s ease-in-out infinite alternate;
+}
+.island-cloud-b {
+  animation: island-drift 30s ease-in-out infinite alternate-reverse;
+}
+.weather-sun-rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: island-spin 40s linear infinite;
+}
+.weather-clouds-drift {
+  animation: island-drift 26s ease-in-out infinite alternate;
+}
+.weather-rain {
+  animation: island-rain 0.9s linear infinite;
+}
+.weather-flash {
+  opacity: 0;
+  animation: island-flash 7s linear infinite;
+}
+
+@keyframes island-wave {
+  from { transform: translateX(0); }
+  to { transform: translateX(-40px); }
+}
+@keyframes island-drift {
+  from { transform: translateX(-18px); }
+  to { transform: translateX(18px); }
+}
+@keyframes island-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes island-rain {
+  from { transform: translateY(-20px); opacity: 0.9; }
+  to { transform: translateY(20px); opacity: 0.4; }
+}
+@keyframes island-flash {
+  0%, 92%, 96%, 100% { opacity: 0; }
+  94% { opacity: 0.5; }
+}
+
+.island-paused *,
+.island-paused *::before,
+.island-paused *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island-screen *,
+  .island-screen *::before,
+  .island-screen *::after {
+    animation: none !important;
+  }
+}
+
+/* "Still being built" sheet. */
+.island-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: end;
+  background: rgb(75 58 67 / 0.25);
+  padding: 16px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
+}
+
+.island-sheet {
+  justify-self: center;
+  width: min(100%, 400px);
+  background: var(--mochi);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  animation: island-sheet-up 0.3s var(--ease-squish);
+}
+
+.island-sheet .auth-button {
+  width: 100%;
+}
+
+@keyframes island-sheet-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

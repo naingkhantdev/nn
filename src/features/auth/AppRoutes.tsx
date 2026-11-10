@@ -1,6 +1,9 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
 import { copy } from '../../copy/copy'
+import type { Features } from '../../core/members'
+import { IslandScreen } from '../island/IslandScreen'
+import { PlaceScreen, SettingsScreen } from '../island/PlaceScreen'
 import { Mochi } from '../mochi/Mochi'
 import type { AuthRepository } from './authRepository'
 import { ChoosePhraseScreen } from './ChoosePhraseScreen'
@@ -52,24 +55,22 @@ export function LoadingScreen() {
   )
 }
 
-/** Placeholder home until Task 8 builds the island. */
-function IslandPlaceholder({ signOut }: { signOut: () => Promise<void> }) {
-  return (
-    <div className="auth-screen">
-      <Mochi expression="happy" size={180} />
-      <h1 className="auth-title">{copy.appName}</h1>
-      <p className="auth-intro">{copy.island.comingSoon}</p>
-      <button className="auth-link-button" type="button" onClick={() => void signOut()}>
-        {copy.auth.signOut}
-      </button>
-    </div>
-  )
+const NO_FEATURES: Features = { sulkEnabled: false }
+const noFeatures = () => NO_FEATURES
+
+interface AppRoutesProps {
+  repo: AuthRepository
+  /** Hook that reads config/features; only listens while `enabled` (signed in). */
+  useFeatures?: (enabled: boolean) => Features
 }
 
-/** Signed out goes to /login, phraseChosen !== true to /choose-phrase, otherwise /. */
-export function AppRoutes({ repo }: { repo: AuthRepository }) {
-  const target = targetFor(useSession(repo))
+/** Signed out goes to /login, phraseChosen !== true to /choose-phrase, otherwise the island. */
+export function AppRoutes({ repo, useFeatures = noFeatures }: AppRoutesProps) {
+  const session = useSession(repo)
+  const target = targetFor(session)
+  const features = useFeatures(session.status === 'signedIn' && session.phraseChosen)
 
+  // Island routes (/, /place/:id, /settings) all share the '/' guard.
   const guard = (here: Path, screen: ReactNode) => {
     if (target === null) return <LoadingScreen />
     if (target !== here) return <Navigate to={target} replace />
@@ -86,7 +87,9 @@ export function AppRoutes({ repo }: { repo: AuthRepository }) {
           <ChoosePhraseScreen changePhrase={repo.changePhrase} signOut={repo.signOut} />,
         )}
       />
-      <Route path="/" element={guard('/', <IslandPlaceholder signOut={repo.signOut} />)} />
+      <Route path="/" element={guard('/', <IslandScreen features={features} />)} />
+      <Route path="/place/:id" element={guard('/', <PlaceScreen features={features} />)} />
+      <Route path="/settings" element={guard('/', <SettingsScreen signOut={repo.signOut} />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

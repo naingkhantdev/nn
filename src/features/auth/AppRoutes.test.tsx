@@ -81,7 +81,7 @@ describe('AppRoutes', () => {
     expect(f.repo.changePhrase).toHaveBeenCalledWith('my new phrase')
 
     f.profile({ phraseChosen: true })
-    expect(screen.getByText(copy.island.comingSoon)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: copy.places.mochiHouse })).toBeInTheDocument()
   })
 
   it('keeps a signed-in user with a chosen phrase away from login', () => {
@@ -89,7 +89,7 @@ describe('AppRoutes', () => {
     renderAt('/login', f.repo)
     f.session({ uid: 'u1' })
     f.profile({ phraseChosen: true })
-    expect(screen.getByText(copy.island.comingSoon)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: copy.places.mochiHouse })).toBeInTheDocument()
     expect(screen.queryByLabelText(copy.auth.usernameLabel)).toBeNull()
   })
 })

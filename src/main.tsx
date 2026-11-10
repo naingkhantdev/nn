@@ -8,15 +8,31 @@ import './index.css'
 import { BrowserRouter } from 'react-router'
 import App from './App.tsx'
 import { auth, db } from './core/firebase'
+import { useIslandConfig, type Features } from './core/members'
 import { createFirebaseAuthRepository } from './features/auth/authRepository'
 import { readInstallEnv } from './platform/install'
+import { createE2eRepository } from './testing/e2eRepo'
 
-const authRepository = createFirebaseAuthRepository(auth, db)
+const NO_FEATURES: Features = { sulkEnabled: false }
+
+function useFirebaseFeatures(enabled: boolean): Features {
+  return useIslandConfig(db, enabled)?.features ?? NO_FEATURES
+}
+
+// Test-only signed-in session; the condition is false in production builds.
+const e2e = import.meta.env.VITE_E2E === 'true' && new URLSearchParams(location.search).has('e2e')
+
+const authRepository = e2e ? createE2eRepository() : createFirebaseAuthRepository(auth, db)
+const installEnv = e2e ? { ...readInstallEnv(), standalone: true } : readInstallEnv()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App repo={authRepository} installEnv={readInstallEnv()} />
+      <App
+        repo={authRepository}
+        installEnv={installEnv}
+        useFeatures={e2e ? undefined : useFirebaseFeatures}
+      />
     </BrowserRouter>
   </StrictMode>,
 )

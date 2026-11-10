@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { Features } from './core/members'
 import type { AuthRepository } from './features/auth/authRepository'
 import { AppRoutes } from './features/auth/AppRoutes'
 import { InstallGuide } from './features/install/InstallGuide'
@@ -13,9 +14,10 @@ import {
 interface AppProps {
   repo: AuthRepository
   installEnv: InstallEnv
+  useFeatures?: (enabled: boolean) => Features
 }
 
-function App({ repo, installEnv }: AppProps) {
+function App({ repo, installEnv, useFeatures }: AppProps) {
   const advice = adviceFor(installEnv)
   const [guideSeen, setGuideSeen] = useState(hasSeenInstallGuide)
 
@@ -36,7 +38,7 @@ function App({ repo, installEnv }: AppProps) {
           }}
         />
       ) : (
-        <AppRoutes repo={repo} />
+        <AppRoutes repo={repo} useFeatures={useFeatures} />
       )}
     </main>
   )

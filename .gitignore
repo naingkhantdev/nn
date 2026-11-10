@@ -33,3 +33,6 @@ dist-ssr
 test-results/
 playwright-report/
 coverage/
+
+# e2e build
+dist-e2e
