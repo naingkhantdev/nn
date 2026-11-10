@@ -1,12 +1,56 @@
 <!doctype html>
-<html lang="en">
+<html lang="my">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#cdeaf2" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Mochi Island" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>Mochi Island</title>
+    <style>
+      /* Shown instantly while the app loads; removed by src/main.tsx. */
+      #loader {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        align-content: center;
+        gap: 12px;
+        background: #cdeaf2;
+        color: #4b3a43;
+        font-family: system-ui, sans-serif;
+        transition: opacity 0.35s ease;
+        z-index: 10;
+      }
+      #loader.gone { opacity: 0; pointer-events: none; }
+      #loader svg { width: 140px; height: 126px; overflow: visible; }
+      #loader .body { transform-box: fill-box; transform-origin: 50% 100%; animation: wake 1.6s ease-in-out infinite; }
+      #loader .eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: open 1.6s ease-in-out infinite; }
+      @keyframes wake { 0%, 100% { transform: scale(1.03, 0.97); } 50% { transform: scale(0.98, 1.03) translateY(-6px); } }
+      @keyframes open { 0%, 40% { transform: scaleY(0.15); } 55%, 100% { transform: scaleY(1); } }
+      @media (prefers-reduced-motion: reduce) { #loader * { animation: none !important; } }
+    </style>
   </head>
   <body>
+    <div id="loader" aria-live="polite">
+      <svg viewBox="0 0 200 180" role="img" aria-label="Mochi">
+        <ellipse cx="100" cy="166" rx="62" ry="8" fill="rgba(75,58,67,.12)" />
+        <g class="body">
+          <path d="M100 40 C150 40 178 82 178 122 C178 150 150 162 100 162 C50 162 22 150 22 122 C22 82 50 40 100 40 Z" fill="#fffdf8" stroke="#4b3a43" stroke-width="4" />
+          <path d="M88 48 Q100 36 112 48" fill="#a8d5a2" stroke="#4b3a43" stroke-width="3" />
+          <ellipse cx="54" cy="110" rx="12" ry="7" fill="#ffb4a2" />
+          <ellipse cx="146" cy="110" rx="12" ry="7" fill="#ffb4a2" />
+          <g class="eyes"><ellipse cx="70" cy="92" rx="6" ry="7.5" fill="#4b3a43" /><ellipse cx="130" cy="92" rx="6" ry="7.5" fill="#4b3a43" /></g>
+          <path d="M92 108 Q100 115 108 108" stroke="#4b3a43" stroke-width="4" stroke-linecap="round" fill="none" />
+        </g>
+      </svg>
+      <div>Mochi Island</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b",
     "format": "prettier --write .",
-    "test:hooks": "node --test tools/hooks/*.test.mjs"
+    "test:e2e": "playwright test",
+    "test:hooks":"node --test tools/hooks/*.test.mjs"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",
@@ -23,6 +24,7 @@
     "react-router": "^7.18.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.8",

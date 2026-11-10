@@ -1,0 +1,35 @@
+/* Mochi Island palette: soft sea-and-matcha, with warm peach cheeks.
+   Original to this app; components use these tokens, never raw hex. */
+:root {
+  --cream: #fff8ef;
+  --ink: #4b3a43;
+  --ink-soft: #7d6a73;
+
+  --mochi: #fffdf8;
+  --mochi-shade: #f3e6d8;
+  --blush: #ffb4a2;
+  --mouth: #ff8f8f;
+  --leaf: #a8d5a2;
+
+  --sky: #cdeaf2;
+  --sky-deep: #a9d8e8;
+  --sea: #7fc8c6;
+  --sea-deep: #4ea6a6;
+  --foam: #e9fbf8;
+  --sand: #f7dfb4;
+  --grass: #a8d5a2;
+  --grass-deep: #79b77a;
+  --cloud: #ffffff;
+  --shadow: rgb(75 58 67 / 0.12);
+
+  --accent: #f29bb5;
+  --accent-ink: #b8456b;
+  --sun: #ffd36e;
+
+  --radius: 22px;
+  --radius-sm: 14px;
+  --ease-squish: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --font-display: 'Baloo 2', 'Noto Sans Myanmar', system-ui, sans-serif;
+  --font-body: 'Noto Sans Myanmar', 'Baloo 2', system-ui, sans-serif;
+}

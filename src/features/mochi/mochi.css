@@ -1,0 +1,124 @@
+/* Mochi motion: transform and opacity only. */
+.mochi {
+  display: block;
+  overflow: visible;
+}
+
+.mochi-body,
+.mochi-eyes,
+.mochi-shadow,
+.mochi-zz,
+.mochi-notes,
+.mochi-huff,
+.mochi-thought {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.mochi-body {
+  animation: mochi-breathe 3.2s ease-in-out infinite;
+}
+.mochi-shadow {
+  transform-origin: 50% 50%;
+  animation: mochi-shadow 3.2s ease-in-out infinite;
+}
+.mochi-eyes {
+  transform-origin: 50% 50%;
+  animation: mochi-blink 5s infinite;
+}
+
+.mochi--happy .mochi-body {
+  animation: mochi-bounce 0.9s ease-in-out infinite;
+}
+.mochi--dancing .mochi-body {
+  animation: mochi-dance 0.8s ease-in-out infinite;
+}
+.mochi--sleepy .mochi-body,
+.mochi--tired .mochi-body {
+  animation-duration: 5s;
+}
+.mochi--sulking .mochi-body {
+  animation: mochi-puff 2.4s ease-in-out infinite;
+}
+.mochi-zz {
+  animation: mochi-float 3s ease-in-out infinite;
+}
+.mochi-notes {
+  animation: mochi-float 1.6s ease-in-out infinite;
+}
+.mochi-huff {
+  animation: mochi-float 2.4s ease-in-out infinite;
+}
+
+@keyframes mochi-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.025, 0.975);
+  }
+}
+@keyframes mochi-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(1.04);
+  }
+}
+@keyframes mochi-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+  97% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes mochi-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1.03, 0.97);
+  }
+  50% {
+    transform: translateY(-10px) scale(0.98, 1.02);
+  }
+}
+@keyframes mochi-dance {
+  0%,
+  100% {
+    transform: rotate(-6deg) translateY(0);
+  }
+  50% {
+    transform: rotate(6deg) translateY(-8px);
+  }
+}
+@keyframes mochi-puff {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.06, 0.97);
+  }
+}
+@keyframes mochi-float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-6px);
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mochi * {
+    animation: none !important;
+  }
+}
