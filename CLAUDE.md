@@ -41,7 +41,7 @@ Mochi Island: a private, cute island web app for exactly two people (the owner a
 
 ## Rules of the house
 
-- Burmese text: Unicode only, never Zawgyi. The owner reviews all Burmese before she sees it.
+- App text is English (she reads English well). Users may type Burmese, so keep the Noto Sans Myanmar font bundled; Unicode only, never Zawgyi.
 - Day resets at Myanmar midnight, decided by the server (`request.time`), never the phone clock.
 - Tap always works instead of shake; the app is fully usable without push.
 - Sulks fade after 24 h, feelings after 8 h; both are calculated, never stored. A sulk start sends one notification; setting a feeling sends none.

@@ -5,7 +5,7 @@ description: Checklist and commands to test and deploy Mochi Island (Firestore r
 
 # Deploy Mochi Island
 
-Every deploy step needs the owner's explicit confirmation, one at a time. Never deploy Burmese text the owner has not approved.
+Every deploy step needs the owner's explicit confirmation, one at a time.
 
 1. **Test everything.** All must pass:
    - `npm run typecheck`, `npm test`, `npm run test:hooks`

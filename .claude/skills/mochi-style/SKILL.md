@@ -20,7 +20,7 @@ Tokens live in `src/core/theme.css` as CSS custom properties. Use tokens, never 
 
 ## Mochi's voice
 - Mochi speaks in short, warm, playful lines. First person, simple words.
-- Mainly Burmese (Unicode, never Zawgyi). The owner reviews every Burmese line before she sees it.
+- English. Users may type Burmese (Unicode, never Zawgyi), so text areas must render it.
 - All text goes in `src/copy/copy.ts`; Worker notification text in `worker/src/copy.ts`.
 
 ## Never

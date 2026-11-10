@@ -19,7 +19,7 @@
 - No activity signals: no location, online or last-seen status, read-tracking, or anything showing she "has not replied". Mochi never dies or gets sick, and there is no "misses you" state.
 - She can leave at any time and delete her data from inside the app.
 - All art, names, and styling are original. No Barbie or other brand references.
-- All app text lives in `src/copy/copy.ts`. The one exception is the Worker's fixed notification text in `worker/src/copy.ts`. The owner reviews all Burmese before she sees it.
+- All app text lives in `src/copy/copy.ts`. The one exception is the Worker's fixed notification text in `worker/src/copy.ts`. App text is English.
 - Bundle a Burmese Unicode font. Never use Zawgyi.
 - Day resets use Myanmar time (UTC+6:30).
 - A Firestore document holding a photo stays under 1 MiB. Target about 300 KB per photo. No video and no voice in Phase 1.
@@ -160,4 +160,4 @@ Notes for specific tasks:
 
 ### Task 18: Release and handover
 
-As the Flutter plan's Task 18, except the release step is `npm run build` then `firebase deploy --only hosting,firestore`, plus the Worker. The owner installs the site to their Android Home Screen from Chrome. `docs/handover.md` in Burmese as before.
+As the Flutter plan's Task 18, except the release step is `npm run build` then `firebase deploy --only hosting,firestore`, plus the Worker. The owner installs the site to their Android Home Screen from Chrome. `docs/handover.md` in English.

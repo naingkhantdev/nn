@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'Mochi Island',
         short_name: 'Mochi',
         description: 'A tiny island for two.',
-        lang: 'my',
+        lang: 'en',
         start_url: '/',
         scope: '/',
         display: 'standalone',
