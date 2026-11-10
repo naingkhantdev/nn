@@ -1,0 +1,15 @@
+name = "mochi-island-notify"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+FIREBASE_PROJECT_ID = "mochi-island-mk"
+ALLOWED_ORIGINS = "https://mochi-island-mk.web.app,https://mochi-island-mk.firebaseapp.com,http://localhost:5173"
+
+# Optional token cache. Create with `npx wrangler kv namespace create TOKENS`
+# and uncomment with the id it prints.
+# [[kv_namespaces]]
+# binding = "TOKENS"
+# id = "<id>"
+
+# Secret (never in this file): npx wrangler secret put FCM_SERVICE_ACCOUNT
