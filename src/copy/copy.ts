@@ -76,6 +76,16 @@ export const copy = {
     roomComingSoon: 'Mochi is getting this place ready...',
   },
 
+  // Mochi's house. Mochi's mood stays on this phone only.
+  house: {
+    pet: 'Pet Mochi',
+    feed: 'Give a treat',
+    saidHello: 'Mochi is happy you dropped by.',
+    saidSleepy: "It's late... Mochi is getting sleepy.",
+    saidAfterPet: 'Mochi wiggles happily!',
+    saidAfterFeed: 'Mochi munches the treat. Yum!',
+  },
+
   // Tappable places on the island (also their accessible labels).
   places: {
     mochiHouse: "Mochi's house",

@@ -1,24 +1,19 @@
 import type { ReactNode } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router'
+import { Navigate, useParams } from 'react-router'
 import { copy } from '../../copy/copy'
 import type { Features } from '../../core/members'
 import { Mochi } from '../mochi/Mochi'
+import { MochiHouseScreen } from '../mochi/MochiHouseScreen'
+import { BackToIsland } from './BackToIsland'
 import { isOpen, isPlaceId, type IslandPlaceId } from './places'
 import '../auth/auth.css'
 
 /**
- * Screens for open places. Tasks 9, 11, 12, and 16 register theirs here;
+ * Screens for open places. Tasks 11, 12, and 16 register theirs here;
  * an open place without one shows a friendly placeholder.
  */
-export const placeScreens: Partial<Record<IslandPlaceId, () => ReactNode>> = {}
-
-export function BackToIsland() {
-  const navigate = useNavigate()
-  return (
-    <button className="auth-link-button" type="button" onClick={() => navigate('/')}>
-      {copy.island.back}
-    </button>
-  )
+export const placeScreens: Partial<Record<IslandPlaceId, () => ReactNode>> = {
+  mochiHouse: () => <MochiHouseScreen />,
 }
 
 function PlacePlaceholder({ place }: { place: IslandPlaceId }) {

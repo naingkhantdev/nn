@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { copy } from '../../copy/copy'
+import { useClock } from '../../core/clock'
 import type { Features } from '../../core/members'
 import { Mochi } from '../mochi/Mochi'
+import { moodFor, readCare } from '../mochi/mochiMood'
 import { IslandScene } from './IslandScene'
 import { PLACE_TAP_SIZE, SCENE_HEIGHT, SCENE_WIDTH, islandPlaces, isOpen } from './places'
 import { useCurrentWeather } from './weather'
@@ -27,6 +29,7 @@ export function IslandScreen({ features }: { features: Features }) {
   const weather = useCurrentWeather()
   const visible = usePageVisible()
   const [stillBuilding, setStillBuilding] = useState(false)
+  const mood = moodFor({ now: useClock()(), ...readCare() })
 
   return (
     <div className={`island-screen${visible ? '' : ' island-paused'}`}>
@@ -34,7 +37,7 @@ export function IslandScreen({ features }: { features: Features }) {
         <IslandScene weather={weather} />
 
         <div className="island-mochi" style={{ left: pct(214, SCENE_WIDTH), top: pct(352, SCENE_HEIGHT) }} aria-hidden="true">
-          <Mochi expression="idle" size={40} />
+          <Mochi expression={mood} size={40} />
         </div>
 
         {islandPlaces.map((place) => (

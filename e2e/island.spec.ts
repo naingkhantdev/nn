@@ -36,3 +36,16 @@ for (const size of [
     expect(errors).toEqual([])
   })
 }
+
+test("Mochi's house: petting makes Mochi happy", async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (err) => errors.push(err.message))
+  await page.setViewportSize({ width: 390, height: 844 })
+
+  await page.goto('/place/mochiHouse?e2e')
+  await page.getByRole('button', { name: 'Pet Mochi' }).click()
+  await expect(page.getByText('Mochi wiggles happily!')).toBeVisible()
+  await page.waitForTimeout(300) // mid-animation: hearts floating
+  await page.screenshot({ path: 'test-results/mochi-house.png' })
+  expect(errors).toEqual([])
+})
