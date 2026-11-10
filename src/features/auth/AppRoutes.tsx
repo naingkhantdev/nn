@@ -5,6 +5,8 @@ import type { Features } from '../../core/members'
 import { IslandScreen } from '../island/IslandScreen'
 import { PlaceScreen, SettingsScreen } from '../island/PlaceScreen'
 import { Mochi } from '../mochi/Mochi'
+import { KeepsakesScreen } from '../stars/KeepsakesScreen'
+import { WriteStarScreen } from '../stars/WriteStarScreen'
 import type { AuthRepository } from './authRepository'
 import { ChoosePhraseScreen } from './ChoosePhraseScreen'
 import { LoginScreen } from './LoginScreen'
@@ -90,6 +92,8 @@ export function AppRoutes({ repo, useFeatures = noFeatures }: AppRoutesProps) {
       <Route path="/" element={guard('/', <IslandScreen features={features} />)} />
       <Route path="/place/:id" element={guard('/', <PlaceScreen features={features} />)} />
       <Route path="/settings" element={guard('/', <SettingsScreen signOut={repo.signOut} />)} />
+      <Route path="/stars/write" element={guard('/', <WriteStarScreen />)} />
+      <Route path="/stars/keepsakes" element={guard('/', <KeepsakesScreen />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

@@ -4,6 +4,7 @@ import { copy } from '../../copy/copy'
 import type { Features } from '../../core/members'
 import { Mochi } from '../mochi/Mochi'
 import { MochiHouseScreen } from '../mochi/MochiHouseScreen'
+import { StarJarScreen } from '../stars/StarJarScreen'
 import { BackToIsland } from './BackToIsland'
 import { isOpen, isPlaceId, type IslandPlaceId } from './places'
 import '../auth/auth.css'
@@ -14,6 +15,7 @@ import '../auth/auth.css'
  */
 export const placeScreens: Partial<Record<IslandPlaceId, () => ReactNode>> = {
   mochiHouse: () => <MochiHouseScreen />,
+  starJar: () => <StarJarScreen />,
 }
 
 function PlacePlaceholder({ place }: { place: IslandPlaceId }) {

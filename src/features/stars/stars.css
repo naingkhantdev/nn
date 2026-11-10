@@ -1,0 +1,224 @@
+.star-write,
+.star-jar {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
+}
+
+.star-paper {
+  background: #fffaf0;
+}
+
+.star-text {
+  font: inherit;
+  font-size: 1rem; /* 16px+ stops iOS zooming */
+  line-height: 1.8; /* room for Burmese stacking */
+  color: var(--ink);
+  background: var(--cream);
+  border: 2px solid var(--mochi-shade);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  width: 100%;
+  min-height: 9em;
+  max-height: 45dvh;
+  resize: none;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  outline: none;
+}
+
+.star-text:focus-visible {
+  border-color: var(--accent);
+}
+
+.star-counter {
+  margin: -6px 0 0;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.star-counter-over {
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.star-photo-preview {
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+}
+
+.star-photo-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.star-photo-actions .auth-link-button {
+  min-height: 44px;
+}
+
+.star-section-title {
+  margin: 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.star-small {
+  font-size: 0.85rem;
+}
+
+.star-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.star-list-item {
+  display: grid;
+  gap: 2px;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+
+.star-list-text {
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.star-list-meta {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+/* The jar: a big friendly button. */
+.jar-button {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.jar-button[aria-disabled='true'] {
+  cursor: default;
+}
+.jar-button:focus-visible {
+  outline: 3px dashed var(--accent-ink);
+  outline-offset: 4px;
+  border-radius: var(--radius);
+}
+.jar-ready {
+  animation: jar-wobble 3.5s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.jar-opening {
+  animation: jar-shake 0.5s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+@keyframes jar-wobble {
+  0%, 80%, 100% { transform: rotate(0); }
+  85% { transform: rotate(-4deg); }
+  90% { transform: rotate(4deg); }
+  95% { transform: rotate(-2deg); }
+}
+@keyframes jar-shake {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+}
+
+.jar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 12px;
+}
+.jar-actions .auth-link-button {
+  min-height: 44px;
+}
+
+/* A star falls and unfolds into its message. */
+.unfold-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(75 58 67 / 0.35);
+  animation: unfold-fade 0.3s ease-out;
+}
+.unfold-card {
+  width: min(100%, 420px);
+  max-height: calc(100dvh - 32px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  justify-items: center;
+  gap: 12px;
+  background: var(--mochi);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  animation: unfold-open 0.7s var(--ease-squish);
+}
+.unfold-star {
+  animation: unfold-fall 0.7s ease-in;
+}
+.unfold-paper {
+  width: 100%;
+  overflow-y: auto;
+  background: #fffaf0;
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+.unfold-text {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+.unfold-card .auth-button {
+  width: 100%;
+}
+@keyframes unfold-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes unfold-open {
+  0% { transform: scale(0.2) rotate(-12deg); opacity: 0; }
+  60% { transform: scale(1.04) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes unfold-fall {
+  from { transform: translateY(-120px) rotate(-90deg); }
+  to { transform: translateY(0) rotate(0); }
+}
+
+.keepsake {
+  display: grid;
+  gap: 6px;
+  background: #fffaf0;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+.keepsake-list {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jar-ready,
+  .jar-opening,
+  .unfold-backdrop,
+  .unfold-card,
+  .unfold-star {
+    animation: none;
+  }
+}

@@ -9,9 +9,13 @@ import { BrowserRouter } from 'react-router'
 import App from './App.tsx'
 import { auth, db } from './core/firebase'
 import { useIslandConfig, type Features } from './core/members'
+import { createNotifyClient } from './core/notifyClient'
+import { ServicesProvider, type Services } from './core/services'
 import { createFirebaseAuthRepository } from './features/auth/authRepository'
+import { compressPhoto } from './features/stars/photoCompress'
+import { createStarRepository } from './features/stars/starRepository'
 import { readInstallEnv } from './platform/install'
-import { createE2eRepository } from './testing/e2eRepo'
+import { createE2eRepository, createE2eServices } from './testing/e2eRepo'
 
 const NO_FEATURES: Features = { sulkEnabled: false }
 
@@ -21,18 +25,30 @@ function useFirebaseFeatures(enabled: boolean): Features {
 
 // Test-only signed-in session; the condition is false in production builds.
 const e2e = import.meta.env.VITE_E2E === 'true' && new URLSearchParams(location.search).has('e2e')
+if (import.meta.env.VITE_E2E === 'true') {
+  // Lets Playwright run the real photo compressor in WebKit.
+  ;(window as unknown as { __mochiTest: unknown }).__mochiTest = { compressPhoto }
+}
+
+const notify = createNotifyClient({
+  url: import.meta.env.VITE_NOTIFY_URL as string | undefined,
+  getIdToken: async () => (auth.currentUser ? auth.currentUser.getIdToken() : null),
+})
 
 const authRepository = e2e ? createE2eRepository() : createFirebaseAuthRepository(auth, db)
+const services: Services = e2e ? createE2eServices() : { stars: createStarRepository({ db, auth, notify }) }
 const installEnv = e2e ? { ...readInstallEnv(), standalone: true } : readInstallEnv()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App
-        repo={authRepository}
-        installEnv={installEnv}
-        useFeatures={e2e ? undefined : useFirebaseFeatures}
-      />
+      <ServicesProvider services={services}>
+        <App
+          repo={authRepository}
+          installEnv={installEnv}
+          useFeatures={e2e ? undefined : useFirebaseFeatures}
+        />
+      </ServicesProvider>
     </BrowserRouter>
   </StrictMode>,
 )

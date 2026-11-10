@@ -16,8 +16,10 @@ service cloud.firestore {
 
     // Myanmar day number (UTC+6:30), decided by the server clock.
     // Must match myanmarDayNumber in src/core/time.ts.
+    // int(): math.floor returns a float, whose string() would be "20402.0",
+    // not the "20402" document id the app uses.
     function myanmarDay() {
-      return math.floor((request.time.toMillis() + 23400000) / 86400000);
+      return int(math.floor((request.time.toMillis() + 23400000) / 86400000));
     }
 
     function onlyKeys(keys) {
@@ -36,6 +38,81 @@ service cloud.firestore {
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() <= 40
         && request.resource.data.phraseChosen is bool;
+      allow delete: if isSelf(uid);
+    }
+
+    function members() {
+      return get(/databases/$(database)/documents/config/members).data.uids;
+    }
+
+    // The writer or the recipient of an existing star-like doc.
+    function isPartyTo(data) {
+      return isMember()
+        && (data.fromUid == request.auth.uid || data.toUid == request.auth.uid);
+    }
+
+    // Stars: the writer sees what they wrote, never whether it was opened
+    // (that lives in openedStars/{recipient}, which the writer cannot read).
+    match /stars/{starId} {
+      allow read: if isPartyTo(resource.data);
+      allow create: if isMember()
+        && onlyKeys(['fromUid', 'toUid', 'text', 'hasPhoto', 'createdAt'])
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid is string
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.toUid in members()
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 1000
+        && request.resource.data.hasPhoto is bool
+        && (request.resource.data.text.size() > 0 || request.resource.data.hasPhoto)
+        && request.resource.data.createdAt == request.time
+        // A star with a photo is only valid together with its photo (one batch).
+        && (!request.resource.data.hasPhoto
+          || existsAfter(/databases/$(database)/documents/starPhotos/$(starId)));
+      allow update: if false;
+      allow delete: if isPartyTo(resource.data);
+    }
+
+    // Photo bytes live apart from the star so listing stars stays cheap.
+    match /starPhotos/{starId} {
+      allow read: if isPartyTo(resource.data);
+      allow create: if isMember()
+        && onlyKeys(['fromUid', 'toUid', 'data'])
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.data is bytes
+        && request.resource.data.data.size() <= 900000
+        && getAfter(/databases/$(database)/documents/stars/$(starId)).data.fromUid == request.auth.uid
+        && getAfter(/databases/$(database)/documents/stars/$(starId)).data.toUid == request.resource.data.toUid
+        && getAfter(/databases/$(database)/documents/stars/$(starId)).data.hasPhoto == true;
+      allow update: if false;
+      allow delete: if isPartyTo(resource.data);
+    }
+
+    // Opened state lives under the recipient only, so the writer can never
+    // see whether, when, or how many of their stars were opened.
+    // Opening = one batch writing items/{starId} + days/{today}. The days doc
+    // is create-only and must be today's server-decided Myanmar day, so one
+    // star per day holds even if the phone's clock is wrong.
+    match /openedStars/{uid}/items/{starId} {
+      allow read: if isSelf(uid);
+      allow create: if isSelf(uid)
+        && onlyKeys(['openedAt'])
+        && request.resource.data.openedAt == request.time
+        && get(/databases/$(database)/documents/stars/$(starId)).data.toUid == uid
+        && getAfter(/databases/$(database)/documents/openedStars/$(uid)/days/$(string(myanmarDay()))).data.starId == starId;
+      allow update: if false;
+      allow delete: if isSelf(uid);
+    }
+
+    match /openedStars/{uid}/days/{day} {
+      allow read: if isSelf(uid);
+      allow create: if isSelf(uid)
+        && day == string(myanmarDay())
+        && day.matches('^[0-9]+$')
+        && onlyKeys(['starId'])
+        && request.resource.data.starId is string
+        && existsAfter(/databases/$(database)/documents/openedStars/$(uid)/items/$(request.resource.data.starId));
+      allow update: if false;
       allow delete: if isSelf(uid);
     }
   }

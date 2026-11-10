@@ -18,8 +18,8 @@ function renderAt(path: string, features: Features = { sulkEnabled: false }) {
 
 describe('PlaceScreen', () => {
   it('shows a placeholder for an open place without its own screen yet', () => {
-    renderAt('/place/starJar')
-    expect(screen.getByText(copy.places.starJar)).toBeInTheDocument()
+    renderAt('/place/feelings')
+    expect(screen.getByText(copy.places.feelings)).toBeInTheDocument()
     expect(screen.getByText(copy.island.roomComingSoon)).toBeInTheDocument()
   })
 
