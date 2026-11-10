@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import { copy } from '../../copy/copy'
 import { ServicesProvider } from '../../core/services'
+import { fakeServices } from '../../testing/fakeServices'
 import { fakeStarRepository, openedState, receivedStars } from '../../testing/fakeStars'
 import { KeepsakesScreen } from './KeepsakesScreen'
 import type { Star } from './star'
@@ -27,7 +28,7 @@ describe('KeepsakesScreen', () => {
     })
     render(
       <MemoryRouter>
-        <ServicesProvider services={{ stars }}>
+        <ServicesProvider services={fakeServices({ stars })}>
           <KeepsakesScreen />
         </ServicesProvider>
       </MemoryRouter>,
@@ -42,7 +43,7 @@ describe('KeepsakesScreen', () => {
   it('shows a kind empty state', () => {
     render(
       <MemoryRouter>
-        <ServicesProvider services={{ stars: fakeStarRepository() }}>
+        <ServicesProvider services={fakeServices()}>
           <KeepsakesScreen />
         </ServicesProvider>
       </MemoryRouter>,

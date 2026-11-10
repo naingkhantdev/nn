@@ -49,3 +49,23 @@ test("Mochi's house: petting makes Mochi happy", async ({ page }) => {
   await page.screenshot({ path: 'test-results/mochi-house.png' })
   expect(errors).toEqual([])
 })
+
+test('how I feel now: pick a feeling and send a treat', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (err) => errors.push(err.message))
+  await page.setViewportSize({ width: 390, height: 844 })
+
+  await page.goto('/place/feelings?e2e')
+  await expect(page.locator('#loader')).toHaveCount(0, { timeout: 5_000 })
+  await page.getByRole('button', { name: /Hungry/ }).click()
+  await expect(page.getByRole('button', { name: /Hungry/ })).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Send a blanket 🧣' }).click()
+  await expect(page.getByText('Sent! Mochi is carrying it over.')).toBeVisible()
+  await page.screenshot({ path: 'test-results/feelings.png', fullPage: true })
+
+  // Back on the island: the other person's sleepy bubble shows.
+  await page.getByRole('button', { name: 'Back to the island' }).click()
+  await expect(page.getByRole('img', { name: 'Across the island, feeling sleepy' })).toBeVisible()
+  await page.screenshot({ path: 'test-results/island-feelings.png' })
+  expect(errors).toEqual([])
+})

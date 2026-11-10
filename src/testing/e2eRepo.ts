@@ -1,5 +1,6 @@
 import type { Services } from '../core/services'
 import type { AuthRepository } from '../features/auth/authRepository'
+import type { FeelingDoc } from '../features/feelings/feeling'
 import type { Star } from '../features/stars/star'
 
 /** In-memory services for e2e screenshots: nothing reaches Firebase. */
@@ -60,6 +61,38 @@ export function createE2eServices(): Services {
         }),
       loadPhoto: async () => null,
     },
+    feelings: createE2eFeelings(),
+  }
+}
+
+function createE2eFeelings(): Services['feelings'] {
+  let mine: FeelingDoc | null = null
+  const mineListeners = new Set<(d: FeelingDoc | null) => void>()
+  const emitMine = () => mineListeners.forEach((cb) => cb(mine))
+  return {
+    watchMine: (cb) => {
+      mineListeners.add(cb)
+      cb(mine)
+      return () => mineListeners.delete(cb)
+    },
+    watchOther: (cb) => {
+      cb({ feeling: 'sleepy', setAt: null })
+      return () => {}
+    },
+    set: (feeling) => {
+      mine = { feeling, setAt: null }
+      emitMine()
+    },
+    clear: () => {
+      mine = null
+      emitMine()
+    },
+    sendTreat: () => new Promise((resolve) => setTimeout(resolve, 300)),
+    watchTreats: (cb) => {
+      cb([])
+      return () => {}
+    },
+    dismissTreat: () => {},
   }
 }
 

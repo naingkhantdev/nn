@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router'
 import { copy } from '../../copy/copy'
 import { useClock } from '../../core/clock'
 import type { Features } from '../../core/members'
+import { useServices } from '../../core/services'
+import { activeFeeling, expressionFor, type FeelingDoc, type Treat } from '../feelings/feeling'
+import { useMinuteTick } from '../feelings/useMinuteTick'
 import { Mochi } from '../mochi/Mochi'
 import { moodFor, readCare } from '../mochi/mochiMood'
 import { IslandScene } from './IslandScene'
 import { PLACE_TAP_SIZE, SCENE_HEIGHT, SCENE_WIDTH, islandPlaces, isOpen } from './places'
 import { useCurrentWeather } from './weather'
 import '../auth/auth.css'
+import '../feelings/feelings.css'
 import './island.css'
 
 /** False while the app is hidden, so animations stop and save battery. */
@@ -29,7 +33,22 @@ export function IslandScreen({ features }: { features: Features }) {
   const weather = useCurrentWeather()
   const visible = usePageVisible()
   const [stillBuilding, setStillBuilding] = useState(false)
-  const mood = moodFor({ now: useClock()(), ...readCare() })
+  const { feelings } = useServices()
+  const [mine, setMine] = useState<FeelingDoc | null>(null)
+  const [other, setOther] = useState<FeelingDoc | null>(null)
+  const [treats, setTreats] = useState<Treat[]>([])
+  useEffect(() => feelings.watchMine(setMine), [feelings])
+  useEffect(() => feelings.watchOther(setOther), [feelings])
+  useEffect(() => feelings.watchTreats(setTreats), [feelings])
+  useMinuteTick()
+
+  const now = useClock()()
+  const myFeeling = activeFeeling(mine, now)
+  const theirFeeling = activeFeeling(other, now)
+  // My own Mochi shows my feeling; otherwise its own gentle local mood.
+  const mood = myFeeling ? expressionFor(myFeeling) : moodFor({ now, ...readCare() })
+  const treat = treats[0] ?? null
+  const feelingsPlace = islandPlaces.find((p) => p.id === 'feelings')!
 
   return (
     <div className={`island-screen${visible ? '' : ' island-paused'}`}>
@@ -39,6 +58,17 @@ export function IslandScreen({ features }: { features: Features }) {
         <div className="island-mochi" style={{ left: pct(214, SCENE_WIDTH), top: pct(352, SCENE_HEIGHT) }} aria-hidden="true">
           <Mochi expression={mood} size={40} />
         </div>
+
+        {theirFeeling && (
+          <div
+            className="feeling-bubble"
+            role="img"
+            aria-label={`${copy.feelings.bubblePrefix} ${copy.feelings.label[theirFeeling].toLowerCase()}`}
+            style={{ left: pct(feelingsPlace.x, SCENE_WIDTH), top: pct(feelingsPlace.y - 28, SCENE_HEIGHT) }}
+          >
+            <Mochi expression={expressionFor(theirFeeling)} size={36} />
+          </div>
+        )}
 
         {islandPlaces.map((place) => (
           <button
@@ -75,6 +105,29 @@ export function IslandScreen({ features }: { features: Features }) {
           />
         </svg>
       </button>
+
+      {treat && !stillBuilding && (
+        <div className="island-sheet-backdrop">
+          <div className="island-sheet" role="dialog" aria-modal="true" aria-labelledby="treat-title">
+            <Mochi expression="happy" size={72} />
+            <h2 id="treat-title" className="auth-title">
+              {copy.treats.arrivedTitle}
+            </h2>
+            <p className="auth-intro">{copy.treats.arrived[treat.kind]}</p>
+            <button
+              type="button"
+              className="auth-button"
+              onClick={() => {
+                // Seen once: delete it, and hide it right away.
+                feelings.dismissTreat(treat.id)
+                setTreats((list) => list.filter((t) => t.id !== treat.id))
+              }}
+            >
+              {copy.treats.thanks}
+            </button>
+          </div>
+        </div>
+      )}
 
       {stillBuilding && (
         <div className="island-sheet-backdrop" onClick={() => setStillBuilding(false)}>

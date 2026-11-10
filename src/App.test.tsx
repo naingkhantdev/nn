@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
+import { ServicesProvider } from './core/services'
+import { fakeServices } from './testing/fakeServices'
 import { copy } from './copy/copy'
 import type { AuthRepository, SessionUser } from './features/auth/authRepository'
 import type { InstallEnv } from './platform/install'
@@ -37,7 +39,9 @@ function signedOutRepo(): AuthRepository {
 function renderApp(installEnv: InstallEnv) {
   render(
     <MemoryRouter>
-      <App repo={signedOutRepo()} installEnv={installEnv} />
+      <ServicesProvider services={fakeServices()}>
+        <App repo={signedOutRepo()} installEnv={installEnv} />
+      </ServicesProvider>
     </MemoryRouter>,
   )
 }

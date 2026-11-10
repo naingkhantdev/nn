@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import { copy } from '../../copy/copy'
 import { ServicesProvider } from '../../core/services'
+import { fakeServices } from '../../testing/fakeServices'
 import { PhotoFailed } from './photoCompress'
 import type { StarRepository } from './starRepository'
 import { SendFailed } from './starRepository'
@@ -17,7 +18,7 @@ function fakeStars(send: StarRepository['send'] = vi.fn().mockResolvedValue(unde
 function renderWrite(stars: StarRepository, compress = vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3]))) {
   render(
     <MemoryRouter>
-      <ServicesProvider services={{ stars }}>
+      <ServicesProvider services={fakeServices({ stars })}>
         <WriteStarScreen compress={compress} />
       </ServicesProvider>
     </MemoryRouter>,

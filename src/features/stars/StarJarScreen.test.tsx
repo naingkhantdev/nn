@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import { copy } from '../../copy/copy'
 import { ServicesProvider } from '../../core/services'
+import { fakeServices } from '../../testing/fakeServices'
 import type { ShakeDetector } from '../../platform/shake'
 import { fakeStarRepository, openedState, receivedStars } from '../../testing/fakeStars'
 import type { Star } from './star'
@@ -43,7 +44,7 @@ function fakeShake(granted = true): ShakeDetector & { shake: () => void } {
 function renderJar(stars: StarRepository, shake = fakeShake()) {
   render(
     <MemoryRouter initialEntries={['/place/starJar']}>
-      <ServicesProvider services={{ stars }}>
+      <ServicesProvider services={fakeServices({ stars })}>
         <Routes>
           <Route path="/place/starJar" element={<StarJarScreen shake={shake} />} />
           <Route path="*" element={<Where />} />

@@ -88,6 +88,31 @@ service cloud.firestore {
       allow delete: if isPartyTo(resource.data);
     }
 
+    // How I feel now: one doc per person, overwritten (never a history).
+    // It fades 8 h after setAt, calculated by the app; setAt is server time.
+    match /feelings/{uid} {
+      allow read: if isMember();
+      allow create, update: if isSelf(uid)
+        && onlyKeys(['feeling', 'setAt'])
+        && request.resource.data.feeling in ['sleepy', 'hungry', 'happy', 'tired', 'bored', 'missingHome']
+        && request.resource.data.setAt == request.time;
+      allow delete: if isSelf(uid);
+    }
+
+    // A treat is seen once by its recipient, who then deletes it.
+    // The sender cannot read it back.
+    match /treats/{treatId} {
+      allow read, delete: if isMember() && resource.data.toUid == request.auth.uid;
+      allow create: if isMember()
+        && onlyKeys(['fromUid', 'toUid', 'kind'])
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid is string
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.toUid in members()
+        && request.resource.data.kind in ['snack', 'blanket', 'hug', 'sweet', 'sticker'];
+      allow update: if false;
+    }
+
     // Opened state lives under the recipient only, so the writer can never
     // see whether, when, or how many of their stars were opened.
     // Opening = one batch writing items/{starId} + days/{today}. The days doc

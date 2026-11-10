@@ -1,23 +1,27 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { copy } from '../../copy/copy'
 import type { Features } from '../../core/members'
 import { IslandScreen } from './IslandScreen'
+import { ServicesProvider, type Services } from '../../core/services'
+import { fakeFeelingRepository, fakeServices, feelingDoc, treatList } from '../../testing/fakeServices'
 import { islandPlaces, isOpen } from './places'
 
 function Where() {
   return <p data-testid="where">{useLocation().pathname}</p>
 }
 
-function renderIsland(features: Features = { sulkEnabled: false }) {
+function renderIsland(features: Features = { sulkEnabled: false }, services: Services = fakeServices()) {
   render(
     <MemoryRouter initialEntries={['/']}>
+      <ServicesProvider services={services}>
       <Routes>
         <Route path="/" element={<IslandScreen features={features} />} />
         <Route path="*" element={<Where />} />
       </Routes>
+      </ServicesProvider>
     </MemoryRouter>,
   )
 }
@@ -90,5 +94,32 @@ describe('IslandScreen', () => {
     renderIsland()
     await userEvent.click(screen.getByRole('button', { name: copy.island.settings }))
     expect(screen.getByTestId('where')).toHaveTextContent('/settings')
+  })
+
+  it("shows the other person's feeling as a bubble, with no time", () => {
+    renderIsland(
+      { sulkEnabled: false },
+      fakeServices({ feelings: fakeFeelingRepository({ watchOther: feelingDoc({ feeling: 'sleepy', setAt: null }) }) }),
+    )
+    expect(screen.getByRole('img', { name: `${copy.feelings.bubblePrefix} sleepy` })).toBeInTheDocument()
+  })
+
+  it('shows no bubble when nothing is shared', () => {
+    renderIsland()
+    expect(screen.queryByRole('img', { name: new RegExp(copy.feelings.bubblePrefix) })).toBeNull()
+  })
+
+  it('a treat arrives once, and saying thanks deletes it', async () => {
+    const dismissTreat = vi.fn()
+    renderIsland(
+      { sulkEnabled: false },
+      fakeServices({
+        feelings: fakeFeelingRepository({ watchTreats: treatList([{ id: 't1', kind: 'blanket' }]), dismissTreat }),
+      }),
+    )
+    expect(screen.getByText(copy.treats.arrived.blanket)).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: copy.treats.thanks }))
+    expect(dismissTreat).toHaveBeenCalledWith('t1')
+    expect(screen.queryByText(copy.treats.arrived.blanket)).toBeNull()
   })
 })

@@ -4,22 +4,26 @@ import { describe, expect, it } from 'vitest'
 import { copy } from '../../copy/copy'
 import type { Features } from '../../core/members'
 import { PlaceScreen } from './PlaceScreen'
+import { ServicesProvider } from '../../core/services'
+import { fakeServices } from '../../testing/fakeServices'
 
 function renderAt(path: string, features: Features = { sulkEnabled: false }) {
   render(
     <MemoryRouter initialEntries={[path]}>
+      <ServicesProvider services={fakeServices()}>
       <Routes>
         <Route path="/" element={<p>island home</p>} />
         <Route path="/place/:id" element={<PlaceScreen features={features} />} />
       </Routes>
+      </ServicesProvider>
     </MemoryRouter>,
   )
 }
 
 describe('PlaceScreen', () => {
   it('shows a placeholder for an open place without its own screen yet', () => {
-    renderAt('/place/feelings')
-    expect(screen.getByText(copy.places.feelings)).toBeInTheDocument()
+    renderAt('/place/sulkCloud', { sulkEnabled: true })
+    expect(screen.getByText(copy.places.sulkCloud)).toBeInTheDocument()
     expect(screen.getByText(copy.island.roomComingSoon)).toBeInTheDocument()
   })
 

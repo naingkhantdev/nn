@@ -1,0 +1,119 @@
+.feelings-screen {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
+}
+
+.feelings-section-title {
+  margin: 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.feelings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.feeling-option {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-height: 96px;
+  padding: 8px 4px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-squish);
+}
+
+.feeling-option:active {
+  transform: scale(0.95);
+}
+
+.feeling-option[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: #fff0f4;
+}
+
+.feeling-option:focus-visible,
+.feeling-nothing:focus-visible {
+  outline: 3px dashed var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.feeling-nothing {
+  justify-self: center;
+  min-height: 44px;
+  padding: 6px 16px;
+  border: 2px solid var(--mochi-shade);
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.feeling-nothing[aria-pressed='true'] {
+  border-color: var(--ink-soft);
+  color: var(--ink);
+}
+
+.feelings-other {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.feelings-other-label {
+  margin: 0;
+  font-weight: 700;
+}
+
+.feelings-other .auth-button {
+  width: 100%;
+}
+
+/* The little bubble on the island. */
+.feeling-bubble {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--mochi);
+  box-shadow: 0 3px 8px var(--shadow);
+  pointer-events: none;
+  animation: feeling-float 3s ease-in-out infinite;
+}
+
+.feeling-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: var(--mochi);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes feeling-float {
+  0%,
+  100% {
+    transform: translate(-50%, -100%);
+  }
+  50% {
+    transform: translate(-50%, calc(-100% - 4px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feeling-option,
+  .feeling-bubble {
+    transition: none;
+    animation: none;
+  }
+}

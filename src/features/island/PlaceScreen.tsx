@@ -3,6 +3,7 @@ import { Navigate, useParams } from 'react-router'
 import { copy } from '../../copy/copy'
 import type { Features } from '../../core/members'
 import { Mochi } from '../mochi/Mochi'
+import { FeelingsScreen } from '../feelings/FeelingsScreen'
 import { MochiHouseScreen } from '../mochi/MochiHouseScreen'
 import { StarJarScreen } from '../stars/StarJarScreen'
 import { BackToIsland } from './BackToIsland'
@@ -16,6 +17,7 @@ import '../auth/auth.css'
 export const placeScreens: Partial<Record<IslandPlaceId, () => ReactNode>> = {
   mochiHouse: () => <MochiHouseScreen />,
   starJar: () => <StarJarScreen />,
+  feelings: () => <FeelingsScreen />,
 }
 
 function PlacePlaceholder({ place }: { place: IslandPlaceId }) {

@@ -12,6 +12,7 @@ import { useIslandConfig, type Features } from './core/members'
 import { createNotifyClient } from './core/notifyClient'
 import { ServicesProvider, type Services } from './core/services'
 import { createFirebaseAuthRepository } from './features/auth/authRepository'
+import { createFeelingRepository } from './features/feelings/feelingRepository'
 import { compressPhoto } from './features/stars/photoCompress'
 import { createStarRepository } from './features/stars/starRepository'
 import { readInstallEnv } from './platform/install'
@@ -36,7 +37,12 @@ const notify = createNotifyClient({
 })
 
 const authRepository = e2e ? createE2eRepository() : createFirebaseAuthRepository(auth, db)
-const services: Services = e2e ? createE2eServices() : { stars: createStarRepository({ db, auth, notify }) }
+const services: Services = e2e
+  ? createE2eServices()
+  : {
+      stars: createStarRepository({ db, auth, notify }),
+      feelings: createFeelingRepository({ db, auth, notify }),
+    }
 const installEnv = e2e ? { ...readInstallEnv(), standalone: true } : readInstallEnv()
 
 createRoot(document.getElementById('root')!).render(

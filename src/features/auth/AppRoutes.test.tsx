@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import { copy } from '../../copy/copy'
 import { AppRoutes } from './AppRoutes'
+import { ServicesProvider } from '../../core/services'
+import { fakeServices } from '../../testing/fakeServices'
 import type { AuthRepository, Profile, SessionUser } from './authRepository'
 
 function fakeRepo() {
@@ -33,7 +35,9 @@ function fakeRepo() {
 function renderAt(path: string, repo: AuthRepository) {
   render(
     <MemoryRouter initialEntries={[path]}>
-      <AppRoutes repo={repo} />
+      <ServicesProvider services={fakeServices()}>
+        <AppRoutes repo={repo} />
+      </ServicesProvider>
     </MemoryRouter>,
   )
 }

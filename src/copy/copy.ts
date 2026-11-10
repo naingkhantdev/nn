@@ -148,4 +148,45 @@ export const copy = {
     keepsakesEmpty: 'Stars you open will be kept here.',
     showPhoto: 'Show photo',
   },
+
+  // How I feel now. No times are ever shown; feelings fade by themselves.
+  feelings: {
+    title: 'How I feel now',
+    intro: 'Share how you feel, if you like. It fades away by itself after a while.',
+    mineTitle: 'Me right now',
+    nothing: 'Nothing right now',
+    label: {
+      sleepy: 'Sleepy',
+      hungry: 'Hungry',
+      happy: 'Happy',
+      tired: 'Tired',
+      bored: 'Bored',
+      missingHome: 'Missing home',
+    },
+    otherTitle: 'Across the island',
+    otherNone: 'Nothing shared right now.',
+    bubblePrefix: 'Across the island, feeling',
+    sendTreat: {
+      snack: 'Send a snack 🍙',
+      blanket: 'Send a blanket 🧣',
+      hug: 'Send a hug 🤗',
+      sweet: 'Send something sweet 🍬',
+      sticker: 'Send a sticker ⭐',
+    },
+    treatSent: 'Sent! Mochi is carrying it over.',
+    treatFailed: "Mochi couldn't carry it just now. Try again in a moment?",
+  },
+
+  // A treat arriving, shown once.
+  treats: {
+    arrivedTitle: 'A little treat arrived!',
+    arrived: {
+      snack: 'A warm snack, just for you 🍙',
+      blanket: 'A cozy blanket to snuggle in 🧣',
+      hug: 'A big soft hug 🤗',
+      sweet: 'Something sweet for you 🍬',
+      sticker: 'A shiny sticker ⭐',
+    },
+    thanks: 'Thank you!',
+  },
 } as const
