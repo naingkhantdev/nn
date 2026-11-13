@@ -7,8 +7,22 @@ import type { Star } from '../features/stars/star'
 export function createE2eServices(): Services {
   let n = 0
   const written: Star[] = [
-    { id: 'w1', fromUid: 'e2e-user', toUid: 'other', text: 'You make every day softer 🌸', hasPhoto: false, createdAt: new Date(2026, 10, 9) },
-    { id: 'w2', fromUid: 'e2e-user', toUid: 'other', text: '', hasPhoto: true, createdAt: new Date(2026, 10, 8) },
+    {
+      id: 'w1',
+      fromUid: 'e2e-user',
+      toUid: 'other',
+      text: 'You make every day softer 🌸',
+      hasPhoto: false,
+      createdAt: new Date(2026, 10, 9),
+    },
+    {
+      id: 'w2',
+      fromUid: 'e2e-user',
+      toUid: 'other',
+      text: '',
+      hasPhoto: true,
+      createdAt: new Date(2026, 10, 8),
+    },
   ]
   const received: Star[] = [
     {
@@ -19,12 +33,22 @@ export function createE2eServices(): Services {
       hasPhoto: false,
       createdAt: new Date(2026, 10, 7),
     },
-    { id: 'r2', fromUid: 'other', toUid: 'e2e-user', text: 'Another one for tomorrow', hasPhoto: false, createdAt: new Date(2026, 10, 9) },
+    {
+      id: 'r2',
+      fromUid: 'other',
+      toUid: 'e2e-user',
+      text: 'Another one for tomorrow',
+      hasPhoto: false,
+      createdAt: new Date(2026, 10, 9),
+    },
   ]
   const opened = new Set<string>()
   let doneToday = false
-  const openedListeners = new Set<(s: { opened: Set<string>; doneToday: boolean }) => void>()
-  const emitOpened = () => openedListeners.forEach((cb) => cb({ opened: new Set(opened), doneToday }))
+  const openedListeners = new Set<
+    (s: { opened: Set<string>; doneToday: boolean }) => void
+  >()
+  const emitOpened = () =>
+    openedListeners.forEach((cb) => cb({ opened: new Set(opened), doneToday }))
 
   return {
     stars: {
@@ -32,7 +56,14 @@ export function createE2eServices(): Services {
       send: (draft) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            written.unshift({ id: draft.id, fromUid: 'e2e-user', toUid: 'other', text: draft.text, hasPhoto: !!draft.photo, createdAt: new Date() })
+            written.unshift({
+              id: draft.id,
+              fromUid: 'e2e-user',
+              toUid: 'other',
+              text: draft.text,
+              hasPhoto: !!draft.photo,
+              createdAt: new Date(),
+            })
             resolve()
           }, 300)
         }),
@@ -62,6 +93,13 @@ export function createE2eServices(): Services {
       loadPhoto: async () => null,
     },
     feelings: createE2eFeelings(),
+    // No push in e2e: the offer never appears.
+    push: {
+      state: () => 'unsupported',
+      enable: async () => 'unsupported',
+      disable: async () => {},
+      refresh: async () => {},
+    },
   }
 }
 

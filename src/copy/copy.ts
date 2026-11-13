@@ -27,7 +27,8 @@ export const copy = {
     phraseLabel: 'Secret phrase',
     signIn: 'Come in',
     signingIn: 'Opening the gate...',
-    wrongPhrase: "Mochi doesn't recognise that... could you check the name and phrase?",
+    wrongPhrase:
+      "Mochi doesn't recognise that... could you check the name and phrase?",
     offline: "No internet just yet. Let's try again in a moment.",
     tooMany: "Let's take a little break and try again later.",
     unknown: 'Something went a bit wrong. Please try again.',
@@ -35,7 +36,7 @@ export const copy = {
 
     choosePhraseTitle: 'Choose your own secret phrase',
     choosePhraseIntro:
-      "The phrase you choose here becomes yours alone. Nobody else will know it, not even Mochi.",
+      'The phrase you choose here becomes yours alone. Nobody else will know it, not even Mochi.',
     newPhraseLabel: 'New secret phrase',
     repeatPhraseLabel: 'Type it once more',
     tooShort: 'It needs at least 6 characters.',
@@ -48,8 +49,10 @@ export const copy = {
   // Install guide: in-app browsers and iPhone Safari.
   install: {
     inAppTitle: 'Please open this in Safari',
-    inAppBody: "Mochi Island can't settle in properly inside this app. Let's move it to Safari.",
-    inAppStepMenu: 'Tap ••• and choose "Open in Safari" (or "Open in browser").',
+    inAppBody:
+      "Mochi Island can't settle in properly inside this app. Let's move it to Safari.",
+    inAppStepMenu:
+      'Tap ••• and choose "Open in Safari" (or "Open in browser").',
     orCopy: 'Or copy the link and paste it into Safari.',
     linkLabel: 'Link',
     copyLink: 'Copy link',
@@ -71,7 +74,8 @@ export const copy = {
     settings: 'Settings',
     back: 'Back to the island',
     stillBuildingTitle: 'Still being built',
-    stillBuildingBody: 'Mochi is still building this part of the island. Come and peek again another day!',
+    stillBuildingBody:
+      'Mochi is still building this part of the island. Come and peek again another day!',
     stillBuildingOk: 'Okay!',
     roomComingSoon: 'Mochi is getting this place ready...',
   },
@@ -102,27 +106,32 @@ export const copy = {
   stars: {
     writeStar: 'Write a star',
     writtenTitle: "Stars you've written",
-    writtenEmpty: 'No stars yet. The first one can be something small and nice.',
+    writtenEmpty:
+      'No stars yet. The first one can be something small and nice.',
     writtenNote: "Stars stay a surprise. You won't see when they're opened.",
     withPhoto: 'with a photo',
     justNow: 'just now',
 
     writeTitle: 'Write a star',
-    writeHint: 'Something kind, a memory, a little joke... it will wait in the jar.',
+    writeHint:
+      'Something kind, a memory, a little joke... it will wait in the jar.',
     textLabel: 'Your star',
     addPhoto: 'Add a photo',
     changePhoto: 'Change photo',
     removePhoto: 'Remove photo',
     photoAlt: 'The photo for your star',
     shrinkingPhoto: 'Making the photo smaller...',
-    photoFailed: "Mochi couldn't open that photo. Try another one? Your words are still here.",
+    photoFailed:
+      "Mochi couldn't open that photo. Try another one? Your words are still here.",
     empty: 'Write a few words or add a photo first.',
     tooLong: "That's a little long. A star can hold up to 1000 characters.",
     send: 'Fold and send',
     sending: 'Folding your star...',
     retry: 'Try again',
-    sendFailed: "The star couldn't fly just now. Your words are safe here. Try again?",
-    offline: "No internet right now. Your words are safe here, so try again once you're back online.",
+    sendFailed:
+      "The star couldn't fly just now. Your words are safe here. Try again?",
+    offline:
+      "No internet right now. Your words are safe here, so try again once you're back online.",
     sentTitle: 'Your star is in the jar!',
     sentBody: "It'll be waiting there.",
     writeAnother: 'Write another',
@@ -131,15 +140,18 @@ export const copy = {
     // Opening stars (the recipient's own jar).
     jarLabel: 'Your star jar',
     jarReady: "Tap the jar to open today's star.",
-    jarReadyShake: "Tap the jar, or give your phone a little shake, to open today's star.",
+    jarReadyShake:
+      "Tap the jar, or give your phone a little shake, to open today's star.",
     jarEmpty: 'Your jar is resting for now. New stars will float in.',
     jarDoneToday: "You've opened today's star. Another one tomorrow!",
-    comeBackTomorrow: "Today's star is already out. Come back tomorrow for the next one!",
+    comeBackTomorrow:
+      "Today's star is already out. Come back tomorrow for the next one!",
     opening: 'A star is falling...',
-    openFailed: "The jar is a bit stuck right now. Try again in a moment?",
+    openFailed: 'The jar is a bit stuck right now. Try again in a moment?',
     shakeMode: 'Turn on shake',
     shakeOn: 'Shake is on',
-    shakeDenied: "Shake isn't allowed on this phone. Tapping works just the same.",
+    shakeDenied:
+      "Shake isn't allowed on this phone. Tapping works just the same.",
     keepIt: 'Keep it',
     photoLoading: 'Unfolding the photo...',
     photoMissing: "This star's photo couldn't be loaded.",
@@ -152,7 +164,8 @@ export const copy = {
   // How I feel now. No times are ever shown; feelings fade by themselves.
   feelings: {
     title: 'How I feel now',
-    intro: 'Share how you feel, if you like. It fades away by itself after a while.',
+    intro:
+      'Share how you feel, if you like. It fades away by itself after a while.',
     mineTitle: 'Me right now',
     nothing: 'Nothing right now',
     label: {
@@ -175,6 +188,20 @@ export const copy = {
     },
     treatSent: 'Sent! Mochi is carrying it over.',
     treatFailed: "Mochi couldn't carry it just now. Try again in a moment?",
+  },
+
+  // Push offer. Asked once; never again automatically after "not now" or a refusal.
+  push: {
+    title: 'Can Mochi tap you on the shoulder?',
+    body: 'When a star or a little treat arrives for you, Mochi can send a quiet notification. Only for those, nothing else. You can turn it off any time in Settings.',
+    yes: 'Yes, please',
+    notNow: 'Not now',
+    asking: 'Asking your phone...',
+    denied:
+      "That's okay! Notifications are off. If you change your mind, remove Mochi from your Home Screen, add it again, and turn them on in Settings.",
+    failed:
+      "Mochi couldn't turn them on just now. You can try again later in Settings.",
+    ok: 'Okay',
   },
 
   // A treat arriving, shown once.

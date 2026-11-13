@@ -1,17 +1,29 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import type { FeelingRepository } from '../features/feelings/feelingRepository'
 import type { StarRepository } from '../features/stars/starRepository'
+import type { PushService } from '../platform/push'
 
 /** Data services for signed-in screens. Real ones in main.tsx; fakes in tests and e2e. */
 export interface Services {
   stars: StarRepository
   feelings: FeelingRepository
+  push: PushService
 }
 
 const ServicesContext = createContext<Services | null>(null)
 
-export function ServicesProvider({ services, children }: { services: Services; children: ReactNode }) {
-  return <ServicesContext.Provider value={services}>{children}</ServicesContext.Provider>
+export function ServicesProvider({
+  services,
+  children,
+}: {
+  services: Services
+  children: ReactNode
+}) {
+  return (
+    <ServicesContext.Provider value={services}>
+      {children}
+    </ServicesContext.Provider>
+  )
 }
 
 export function useServices(): Services {

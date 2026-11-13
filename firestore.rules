@@ -113,6 +113,16 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // Push token for this person's phone. Only they can see or change it;
+    // the Worker reads it with its service account (which bypasses rules).
+    match /devices/{uid} {
+      allow read, delete: if isSelf(uid);
+      allow create, update: if isSelf(uid)
+        && onlyKeys(['token'])
+        && request.resource.data.token is string
+        && request.resource.data.token.size() <= 4096;
+    }
+
     // Opened state lives under the recipient only, so the writer can never
     // see whether, when, or how many of their stars were opened.
     // Opening = one batch writing items/{starId} + days/{today}. The days doc

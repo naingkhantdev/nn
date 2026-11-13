@@ -4,12 +4,27 @@ import { copy } from '../../copy/copy'
 import { useClock } from '../../core/clock'
 import type { Features } from '../../core/members'
 import { useServices } from '../../core/services'
-import { activeFeeling, expressionFor, type FeelingDoc, type Treat } from '../feelings/feeling'
+import {
+  activeFeeling,
+  expressionFor,
+  type FeelingDoc,
+  type Treat,
+} from '../feelings/feeling'
 import { useMinuteTick } from '../feelings/useMinuteTick'
 import { Mochi } from '../mochi/Mochi'
 import { moodFor, readCare } from '../mochi/mochiMood'
+import {
+  NotificationPrompt,
+  shouldOfferPush,
+} from '../settings/NotificationPrompt'
 import { IslandScene } from './IslandScene'
-import { PLACE_TAP_SIZE, SCENE_HEIGHT, SCENE_WIDTH, islandPlaces, isOpen } from './places'
+import {
+  PLACE_TAP_SIZE,
+  SCENE_HEIGHT,
+  SCENE_WIDTH,
+  islandPlaces,
+  isOpen,
+} from './places'
 import { useCurrentWeather } from './weather'
 import '../auth/auth.css'
 import '../feelings/feelings.css'
@@ -17,7 +32,9 @@ import './island.css'
 
 /** False while the app is hidden, so animations stop and save battery. */
 function usePageVisible(): boolean {
-  const [visible, setVisible] = useState(() => document.visibilityState !== 'hidden')
+  const [visible, setVisible] = useState(
+    () => document.visibilityState !== 'hidden',
+  )
   useEffect(() => {
     const update = () => setVisible(document.visibilityState !== 'hidden')
     document.addEventListener('visibilitychange', update)
@@ -33,7 +50,8 @@ export function IslandScreen({ features }: { features: Features }) {
   const weather = useCurrentWeather()
   const visible = usePageVisible()
   const [stillBuilding, setStillBuilding] = useState(false)
-  const { feelings } = useServices()
+  const { feelings, push } = useServices()
+  const [offeringPush, setOfferingPush] = useState(() => shouldOfferPush(push))
   const [mine, setMine] = useState<FeelingDoc | null>(null)
   const [other, setOther] = useState<FeelingDoc | null>(null)
   const [treats, setTreats] = useState<Treat[]>([])
@@ -46,7 +64,9 @@ export function IslandScreen({ features }: { features: Features }) {
   const myFeeling = activeFeeling(mine, now)
   const theirFeeling = activeFeeling(other, now)
   // My own Mochi shows my feeling; otherwise its own gentle local mood.
-  const mood = myFeeling ? expressionFor(myFeeling) : moodFor({ now, ...readCare() })
+  const mood = myFeeling
+    ? expressionFor(myFeeling)
+    : moodFor({ now, ...readCare() })
   const treat = treats[0] ?? null
   const feelingsPlace = islandPlaces.find((p) => p.id === 'feelings')!
 
@@ -55,7 +75,11 @@ export function IslandScreen({ features }: { features: Features }) {
       <div className="island-frame">
         <IslandScene weather={weather} />
 
-        <div className="island-mochi" style={{ left: pct(214, SCENE_WIDTH), top: pct(352, SCENE_HEIGHT) }} aria-hidden="true">
+        <div
+          className="island-mochi"
+          style={{ left: pct(214, SCENE_WIDTH), top: pct(352, SCENE_HEIGHT) }}
+          aria-hidden="true"
+        >
           <Mochi expression={mood} size={40} />
         </div>
 
@@ -64,7 +88,10 @@ export function IslandScreen({ features }: { features: Features }) {
             className="feeling-bubble"
             role="img"
             aria-label={`${copy.feelings.bubblePrefix} ${copy.feelings.label[theirFeeling].toLowerCase()}`}
-            style={{ left: pct(feelingsPlace.x, SCENE_WIDTH), top: pct(feelingsPlace.y - 28, SCENE_HEIGHT) }}
+            style={{
+              left: pct(feelingsPlace.x, SCENE_WIDTH),
+              top: pct(feelingsPlace.y - 28, SCENE_HEIGHT),
+            }}
           >
             <Mochi expression={expressionFor(theirFeeling)} size={36} />
           </div>
@@ -83,7 +110,9 @@ export function IslandScreen({ features }: { features: Features }) {
               height: `${PLACE_TAP_SIZE}px`,
             }}
             onClick={() =>
-              isOpen(place.id, features) ? navigate(`/place/${place.id}`) : setStillBuilding(true)
+              isOpen(place.id, features)
+                ? navigate(`/place/${place.id}`)
+                : setStillBuilding(true)
             }
           />
         ))}
@@ -106,9 +135,21 @@ export function IslandScreen({ features }: { features: Features }) {
         </svg>
       </button>
 
-      {treat && !stillBuilding && (
+      {offeringPush && (
+        <NotificationPrompt
+          push={push}
+          onClose={() => setOfferingPush(false)}
+        />
+      )}
+
+      {treat && !stillBuilding && !offeringPush && (
         <div className="island-sheet-backdrop">
-          <div className="island-sheet" role="dialog" aria-modal="true" aria-labelledby="treat-title">
+          <div
+            className="island-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="treat-title"
+          >
             <Mochi expression="happy" size={72} />
             <h2 id="treat-title" className="auth-title">
               {copy.treats.arrivedTitle}
@@ -130,7 +171,10 @@ export function IslandScreen({ features }: { features: Features }) {
       )}
 
       {stillBuilding && (
-        <div className="island-sheet-backdrop" onClick={() => setStillBuilding(false)}>
+        <div
+          className="island-sheet-backdrop"
+          onClick={() => setStillBuilding(false)}
+        >
           <div
             className="island-sheet"
             role="dialog"
@@ -143,7 +187,11 @@ export function IslandScreen({ features }: { features: Features }) {
               {copy.island.stillBuildingTitle}
             </h2>
             <p className="auth-intro">{copy.island.stillBuildingBody}</p>
-            <button type="button" className="auth-button" onClick={() => setStillBuilding(false)}>
+            <button
+              type="button"
+              className="auth-button"
+              onClick={() => setStillBuilding(false)}
+            >
               {copy.island.stillBuildingOk}
             </button>
           </div>

@@ -6,7 +6,13 @@ import { copy } from '../../copy/copy'
 import type { Features } from '../../core/members'
 import { IslandScreen } from './IslandScreen'
 import { ServicesProvider, type Services } from '../../core/services'
-import { fakeFeelingRepository, fakeServices, feelingDoc, treatList } from '../../testing/fakeServices'
+import {
+  fakeFeelingRepository,
+  fakePushService,
+  fakeServices,
+  feelingDoc,
+  treatList,
+} from '../../testing/fakeServices'
 import { islandPlaces, isOpen } from './places'
 
 function Where() {
@@ -121,5 +127,21 @@ describe('IslandScreen', () => {
     await userEvent.click(screen.getByRole('button', { name: copy.treats.thanks }))
     expect(dismissTreat).toHaveBeenCalledWith('t1')
     expect(screen.queryByText(copy.treats.arrived.blanket)).toBeNull()
+  })
+
+  it("offers notifications on the island when they're possible but off", () => {
+    renderIsland({ sulkEnabled: false }, fakeServices({ push: fakePushService('off') }))
+    expect(screen.getByRole('dialog', { name: copy.push.title })).toBeInTheDocument()
+  })
+
+  it('a treat waits until the notification offer is answered', () => {
+    renderIsland(
+      { sulkEnabled: false },
+      fakeServices({
+        push: fakePushService('off'),
+        feelings: fakeFeelingRepository({ watchTreats: treatList([{ id: 't1', kind: 'hug' }]) }),
+      }),
+    )
+    expect(screen.queryByText(copy.treats.arrived.hug)).toBeNull()
   })
 })
