@@ -30,6 +30,7 @@ Mochi Island: a private, cute island web app for exactly two people (the owner a
 - `npm run dev` / `npm run build` / `npm test` / `npm run typecheck`
 - `npm run test:hooks` (hook scripts), `npm --prefix test-rules test` (rules, emulator), `npm --prefix worker test`
 - Deploys (`firebase deploy`, `wrangler deploy`, `wrangler secret`) and `git push` always need the owner's confirmation.
+- Free hosting setup and status (not deployed yet): `docs/hosting.md`.
 
 ## Layout
 
