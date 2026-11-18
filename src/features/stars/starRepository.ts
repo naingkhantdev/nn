@@ -21,8 +21,8 @@ import { otherUidOf } from '../../core/members'
 import type { Star, StarDraft } from './star'
 
 export class SendFailed extends Error {
-  readonly reason: 'offline' | 'failed'
-  constructor(reason: 'offline' | 'failed') {
+  readonly reason: 'offline' | 'failed' | 'rules' | 'setup' | 'partnerMissing'
+  constructor(reason: 'offline' | 'failed' | 'rules' | 'setup' | 'partnerMissing') {
     super(reason)
     this.name = 'SendFailed'
     this.reason = reason
@@ -110,7 +110,7 @@ export function createStarRepository({
   async function otherMember(uid: string): Promise<string> {
     const snap = await getDoc(doc(db, 'config/members'))
     const other = otherUidOf((snap.data()?.uids as string[] | undefined) ?? [], uid)
-    if (!other) throw new SendFailed('failed')
+    if (!other) throw new SendFailed('partnerMissing')
     return other
   }
 
@@ -155,7 +155,7 @@ export function createStarRepository({
         if (code === 'permission-denied' && (await alreadySent(draft.id, uid))) {
           // fall through to notify below
         } else {
-          throw err instanceof SendFailed ? err : new SendFailed(isOnline() ? 'failed' : 'offline')
+          throw err instanceof SendFailed ? err : new SendFailed(!isOnline() ? 'offline' : code === 'permission-denied' ? 'rules' : code === 'failed-precondition' ? 'setup' : 'failed')
         }
       }
       notify.send('star_new').catch(() => {})
@@ -248,7 +248,7 @@ export function createStarRepository({
           return 'opened'
         } catch (err) {
           if ((err as { code?: string }).code !== 'permission-denied') {
-            throw err instanceof SendFailed ? err : new SendFailed(isOnline() ? 'failed' : 'offline')
+            throw err instanceof SendFailed ? err : new SendFailed(!isOnline() ? 'offline' : 'failed')
           }
         }
       }

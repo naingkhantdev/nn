@@ -91,7 +91,7 @@ export function AppRoutes({ repo, useFeatures = noFeatures }: AppRoutesProps) {
       />
       <Route path="/" element={guard('/', <IslandScreen features={features} />)} />
       <Route path="/place/:id" element={guard('/', <PlaceScreen features={features} />)} />
-      <Route path="/settings" element={guard('/', <SettingsScreen signOut={repo.signOut} />)} />
+      <Route path="/settings" element={guard('/', <SettingsScreen signOut={repo.signOut} deleteAccount={repo.deleteAccount} />)} />
       <Route path="/stars/write" element={guard('/', <WriteStarScreen />)} />
       <Route path="/stars/keepsakes" element={guard('/', <KeepsakesScreen />)} />
       <Route path="*" element={<Navigate to="/" replace />} />

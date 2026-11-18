@@ -1,5 +1,6 @@
 import {
   EmailAuthProvider,
+  deleteUser,
   onAuthStateChanged,
   reauthenticateWithCredential,
   signInWithEmailAndPassword,
@@ -29,10 +30,11 @@ export interface AuthRepository {
   signIn(username: string, phrase: string): Promise<void>
   changePhrase(newPhrase: string): Promise<void>
   reauthenticate(phrase: string): Promise<void>
+  deleteAccount?(phrase: string, clearData: () => Promise<void>): Promise<void>
   signOut(): Promise<void>
 }
 
-export type AuthFailureKind = 'wrongPhrase' | 'offline' | 'tooMany' | 'needsReauth' | 'unknown'
+export type AuthFailureKind = 'wrongPhrase' | 'offline' | 'tooMany' | 'needsReauth' | 'membership' | 'unknown'
 
 export class AuthFailure extends Error {
   readonly kind: AuthFailureKind
@@ -57,6 +59,9 @@ const codeToKind: Record<string, AuthFailureKind> = {
   'auth/network-request-failed': 'offline',
   'auth/too-many-requests': 'tooMany',
   'auth/requires-recent-login': 'needsReauth',
+  'permission-denied': 'membership',
+  'firestore/permission-denied': 'membership',
+  unavailable: 'offline',
 }
 
 export function toAuthFailure(err: unknown): AuthFailure {
@@ -102,15 +107,16 @@ export function createFirebaseAuthRepository(auth: Auth, db: Firestore): AuthRep
     async changePhrase(newPhrase) {
       const user = currentUser()
       try {
-        await updatePassword(user, newPhrase)
         const ref = doc(db, 'profiles', user.uid)
         const existing = await getDoc(ref)
         if (existing.exists()) {
-          await updateDoc(ref, { phraseChosen: true })
+          await updateDoc(ref, { phraseChosen: false })
         } else {
           const displayName = (user.email ?? '').split('@')[0].slice(0, 40)
-          await setDoc(ref, { displayName, phraseChosen: true })
+          await setDoc(ref, { displayName, phraseChosen: false })
         }
+        await updatePassword(user, newPhrase)
+        await updateDoc(ref, { phraseChosen: true })
       } catch (err) {
         throw toAuthFailure(err)
       }
@@ -120,6 +126,21 @@ export function createFirebaseAuthRepository(auth: Auth, db: Firestore): AuthRep
       const user = currentUser()
       try {
         await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email ?? '', phrase))
+      } catch (err) {
+        throw toAuthFailure(err)
+      }
+    },
+
+    async deleteAccount(phrase, clearData) {
+      const user = currentUser()
+      try {
+        await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email ?? '', phrase))
+      } catch (err) {
+        throw toAuthFailure(err)
+      }
+      await clearData()
+      try {
+        await deleteUser(user)
       } catch (err) {
         throw toAuthFailure(err)
       }

@@ -62,12 +62,14 @@ describe('treats', () => {
     await assertFails(setDoc(doc(asOwner(), 'treats/d'), treat('owner', 'her', 'diamond')))
   })
 
-  it('only the recipient reads and deletes; the sender cannot read it back', async () => {
+  it('both members can remove their own treats during account cleanup', async () => {
     await setDoc(doc(asOwner(), 'treats/t1'), treat('owner', 'her'))
-    await assertFails(getDoc(doc(asOwner(), 'treats/t1')))
+    await setDoc(doc(asHer(), 'treats/t2'), treat('her', 'owner'))
+    await assertSucceeds(getDoc(doc(asOwner(), 'treats/t1')))
     await assertFails(getDoc(doc(asStranger(), 'treats/t1')))
     await assertSucceeds(getDocs(query(collection(asHer(), 'treats'), where('toUid', '==', 'her'))))
-    await assertFails(deleteDoc(doc(asOwner(), 'treats/t1')))
-    await assertSucceeds(deleteDoc(doc(asHer(), 'treats/t1')))
+    await assertSucceeds(getDocs(query(collection(asOwner(), 'treats'), where('fromUid', '==', 'owner'))))
+    await assertSucceeds(deleteDoc(doc(asOwner(), 'treats/t1')))
+    await assertSucceeds(deleteDoc(doc(asHer(), 'treats/t2')))
   })
 })

@@ -3,6 +3,7 @@ import type { FeelingDoc, Treat } from '../features/feelings/feeling'
 import type { FeelingRepository } from '../features/feelings/feelingRepository'
 import type { PushService, PushState } from '../platform/push'
 import { fakeStarRepository } from './fakeStars'
+import type { IslandRepository } from '../features/island/islandRepository'
 
 /** A quiet FeelingRepository for screen tests; override what a test needs. */
 export function fakeFeelingRepository(overrides: Partial<FeelingRepository> = {}): FeelingRepository {
@@ -53,6 +54,28 @@ export function fakeServices(overrides: Partial<Services> = {}): Services {
     stars: fakeStarRepository(),
     feelings: fakeFeelingRepository(),
     push: fakePushService(),
+    island: fakeIslandRepository(),
+    ...overrides,
+  }
+}
+
+export function fakeIslandRepository(overrides: Partial<IslandRepository> = {}): IslandRepository {
+  return {
+    myUid: () => 'e2e-user',
+    watchLetters: (_kind, _box, cb) => { cb([]); return () => {} },
+    writeLetter: async () => {},
+    watchGarden: (cb) => { cb([]); return () => {} },
+    addMemory: async () => {},
+    deleteMemory: async () => {},
+    watchLantern: (cb) => { cb(null); return () => {} },
+    lightLantern: async () => {},
+    watchActiveSulks: (cb) => { cb([]); return () => {} },
+    watchSulkHistory: (cb) => { cb([]); return () => {} },
+    watchComforts: (_id, cb) => { cb([]); return () => {} },
+    startSulk: async () => {},
+    comfortSulk: async () => {},
+    forgiveSulk: async () => {},
+    deleteMyData: async () => {},
     ...overrides,
   }
 }

@@ -53,3 +53,12 @@ export function recordCare(kind: 'pet' | 'feed', at: number): void {
     // Storage blocked: Mochi is still happy for this visit.
   }
 }
+
+export function clearCare(): void {
+  try {
+    localStorage.removeItem(KEYS.pet)
+    localStorage.removeItem(KEYS.feed)
+  } catch {
+    // Storage blocked: there is no local care data to clear.
+  }
+}

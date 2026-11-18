@@ -102,17 +102,175 @@ service cloud.firestore {
     // A treat is seen once by its recipient, who then deletes it.
     // The sender cannot read it back.
     match /treats/{treatId} {
-      allow read, delete: if isMember() && resource.data.toUid == request.auth.uid;
+      allow read: if isMember() && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid);
+      allow delete: if isMember() && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid);
       allow create: if isMember()
         && onlyKeys(['fromUid', 'toUid', 'kind'])
         && request.resource.data.fromUid == request.auth.uid
         && request.resource.data.toUid is string
         && request.resource.data.toUid != request.auth.uid
         && request.resource.data.toUid in members()
+        && exists(/databases/$(database)/documents/profiles/$(request.resource.data.toUid))
         && request.resource.data.kind in ['snack', 'blanket', 'hug', 'sweet', 'sticker'];
       allow update: if false;
     }
 
+    function isLetterParty(data) {
+      return isMember() && (data.fromUid == request.auth.uid || data.toUid == request.auth.uid);
+    }
+
+    // Letter metadata can show that a bottle exists, but its text stays in a
+    // separate document until the chosen day.
+    match /islandLetters/{letterId} {
+      allow read: if isLetterParty(resource.data);
+      allow create: if isMember()
+        && onlyKeys(['kind', 'fromUid', 'toUid', 'opensAt', 'createdAt'])
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid in members()
+        && exists(/databases/$(database)/documents/profiles/$(request.resource.data.toUid))
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.kind in ['snail', 'bottle']
+        && request.resource.data.createdAt == request.time
+        && ((request.resource.data.kind == 'snail' && request.resource.data.opensAt == null)
+          || (request.resource.data.kind == 'bottle' && request.resource.data.opensAt is timestamp
+            && request.resource.data.opensAt > request.time))
+        && existsAfter(/databases/$(database)/documents/islandLetterBodies/$(letterId));
+      allow update: if false;
+      allow delete: if isLetterParty(resource.data);
+    }
+
+    match /islandLetterBodies/{letterId} {
+      allow read: if isLetterParty(resource.data)
+        && (resource.data.fromUid == request.auth.uid
+          || resource.data.kind == 'snail'
+          || resource.data.opensAt <= request.time);
+      allow create: if isMember()
+        && onlyKeys(['kind', 'fromUid', 'toUid', 'text', 'opensAt', 'createdAt'])
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid in members()
+        && exists(/databases/$(database)/documents/profiles/$(request.resource.data.toUid))
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 1000
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/islandLetters/$(letterId)).data.fromUid == request.auth.uid
+        && getAfter(/databases/$(database)/documents/islandLetters/$(letterId)).data.toUid == request.resource.data.toUid
+        && getAfter(/databases/$(database)/documents/islandLetters/$(letterId)).data.kind == request.resource.data.kind
+        && getAfter(/databases/$(database)/documents/islandLetters/$(letterId)).data.opensAt == request.resource.data.opensAt;
+      allow update: if false;
+      allow delete: if isLetterParty(resource.data);
+    }
+
+    match /gardenMemories/{memoryId} {
+      allow read: if isMember();
+      allow create: if isMember()
+        && onlyKeys(['fromUid', 'text', 'createdAt'])
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt == request.time;
+      allow update: if false;
+      allow delete: if isMember();
+    }
+
+    // Only today's light is visible; old lighting activity is overwritten.
+    match /lanterns/today {
+      allow read: if isMember();
+      allow create: if isMember()
+        && onlyKeys(['day', 'litBy', 'updatedAt'])
+        && request.resource.data.day == myanmarDay()
+        && request.resource.data.litBy is list
+        && request.resource.data.litBy.size() == 1
+        && request.auth.uid in request.resource.data.litBy
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isMember()
+        && onlyKeys(['day', 'litBy', 'updatedAt'])
+        && request.resource.data.day == myanmarDay()
+        && request.resource.data.litBy is list
+        && request.resource.data.litBy.size() <= 2
+        && request.auth.uid in request.resource.data.litBy
+        && request.resource.data.updatedAt == request.time
+        && ((resource.data.day == myanmarDay()
+          && request.resource.data.litBy.hasAll(resource.data.litBy)
+          && ((request.auth.uid in resource.data.litBy
+            && request.resource.data.litBy.size() == resource.data.litBy.size())
+            || (!(request.auth.uid in resource.data.litBy)
+              && request.resource.data.litBy.size() == resource.data.litBy.size() + 1)))
+          || (resource.data.day != myanmarDay()
+            && request.resource.data.litBy.size() == 1));
+      allow delete: if isMember();
+    }
+
+    function activeSulk(data) {
+      return data.endedAt == null
+        && data.startedAt + duration.value(24, 'h') > request.time;
+    }
+
+    function pointerCanStart(uid) {
+      let pointer = /databases/$(database)/documents/sulkPointers/$(uid);
+      return !exists(pointer)
+        || get(pointer).data.activeSulkId == null
+        || !exists(/databases/$(database)/documents/sulks/$(get(pointer).data.activeSulkId))
+        || !activeSulk(get(/databases/$(database)/documents/sulks/$(get(pointer).data.activeSulkId)).data);
+    }
+
+    match /sulks/{sulkId} {
+      allow read: if isMember();
+      allow create: if isMember()
+        && onlyKeys(['sulkerUid', 'level', 'reason', 'startedAt', 'endedAt', 'comfortCount'])
+        && request.resource.data.sulkerUid == request.auth.uid
+        && request.resource.data.level in ['cloudy', 'rain', 'storm']
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() <= 200
+        && request.resource.data.startedAt == request.time
+        && request.resource.data.endedAt == null
+        && request.resource.data.comfortCount == 0
+        && pointerCanStart(request.auth.uid)
+        && getAfter(/databases/$(database)/documents/sulkPointers/$(request.auth.uid)).data.activeSulkId == sulkId;
+      allow update: if isMember()
+        && ((resource.data.sulkerUid == request.auth.uid
+            && activeSulk(resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['endedAt'])
+            && request.resource.data.endedAt == request.time)
+          || (resource.data.sulkerUid != request.auth.uid
+            && activeSulk(resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['comfortCount', 'lastComfortId'])
+            && request.resource.data.comfortCount == resource.data.comfortCount + 1
+            && request.resource.data.lastComfortId is string
+            && getAfter(/databases/$(database)/documents/sulkComforts/$(request.resource.data.lastComfortId)).data.sulkId == sulkId));
+      allow delete: if isMember();
+    }
+
+    match /sulkPointers/{uid} {
+      allow read: if isMember();
+      allow create, update: if isSelf(uid)
+        && onlyKeys(['activeSulkId', 'startedAt'])
+        && request.resource.data.activeSulkId is string
+        && request.resource.data.startedAt == request.time
+        && getAfter(/databases/$(database)/documents/sulks/$(request.resource.data.activeSulkId)).data.sulkerUid == uid
+        && getAfter(/databases/$(database)/documents/sulks/$(request.resource.data.activeSulkId)).data.startedAt == request.time;
+      allow delete: if isSelf(uid);
+    }
+
+    match /sulkComforts/{comfortId} {
+      allow read: if isMember();
+      allow create: if isMember()
+        && onlyKeys(['comfortId', 'sulkId', 'fromUid', 'toUid', 'kind', 'text', 'createdAt'])
+        && request.resource.data.comfortId == comfortId
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.kind in ['hug', 'note', 'drops']
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 200
+        && request.resource.data.createdAt == request.time
+        && get(/databases/$(database)/documents/sulks/$(request.resource.data.sulkId)).data.sulkerUid == request.resource.data.toUid
+        && request.resource.data.toUid != request.auth.uid
+        && activeSulk(get(/databases/$(database)/documents/sulks/$(request.resource.data.sulkId)).data)
+        && getAfter(/databases/$(database)/documents/sulks/$(request.resource.data.sulkId)).data.lastComfortId == comfortId;
+      allow update: if false;
+      allow delete: if isMember();
+    }
     // Push token for this person's phone. Only they can see or change it;
     // the Worker reads it with its service account (which bypasses rules).
     match /devices/{uid} {

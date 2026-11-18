@@ -16,6 +16,7 @@ import { createFirebaseAuthRepository } from './features/auth/authRepository'
 import { createFeelingRepository } from './features/feelings/feelingRepository'
 import { compressPhoto } from './features/stars/photoCompress'
 import { createStarRepository } from './features/stars/starRepository'
+import { createIslandRepository } from './features/island/islandRepository'
 import { createFirebasePush } from './platform/firebasePush'
 import { readInstallEnv } from './platform/install'
 import { createE2eRepository, createE2eServices } from './testing/e2eRepo'
@@ -51,6 +52,7 @@ const services: Services = e2e
   : {
       stars: createStarRepository({ db, auth, notify }),
       feelings: createFeelingRepository({ db, auth, notify }),
+      island: createIslandRepository({ db, auth, notify }),
       push: createFirebasePush({
         app,
         auth,

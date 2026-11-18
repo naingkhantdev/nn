@@ -21,20 +21,20 @@ function renderAt(path: string, features: Features = { sulkEnabled: false }) {
 }
 
 describe('PlaceScreen', () => {
-  it('shows a placeholder for an open place without its own screen yet', () => {
+  it('shows the working sulk cloud screen', () => {
     renderAt('/place/sulkCloud', { sulkEnabled: true })
-    expect(screen.getByText(copy.places.sulkCloud)).toBeInTheDocument()
-    expect(screen.getByText(copy.island.roomComingSoon)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: copy.placesUi.sulkTitle })).toBeInTheDocument()
+    expect(screen.getByText(copy.placesUi.sulkIntro)).toBeInTheDocument()
   })
 
-  it('sends closed places back to the island', () => {
+  it('opens the garden screen', () => {
     renderAt('/place/garden')
-    expect(screen.getByText('island home')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: copy.placesUi.gardenTitle })).toBeInTheDocument()
   })
 
-  it('sends the sulk cloud back while sulk is off', () => {
+  it('keeps the sulk cloud available when sulk is off', () => {
     renderAt('/place/sulkCloud')
-    expect(screen.getByText('island home')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: copy.placesUi.sulkTitle })).toBeInTheDocument()
   })
 
   it('sends unknown places back to the island', () => {

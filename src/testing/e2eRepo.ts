@@ -2,6 +2,7 @@ import type { Services } from '../core/services'
 import type { AuthRepository } from '../features/auth/authRepository'
 import type { FeelingDoc } from '../features/feelings/feeling'
 import type { Star } from '../features/stars/star'
+import { fakeIslandRepository } from './fakeServices'
 
 /** In-memory services for e2e screenshots: nothing reaches Firebase. */
 export function createE2eServices(): Services {
@@ -93,6 +94,7 @@ export function createE2eServices(): Services {
       loadPhoto: async () => null,
     },
     feelings: createE2eFeelings(),
+    island: fakeIslandRepository(),
     // No push in e2e: the offer never appears.
     push: {
       state: () => 'unsupported',

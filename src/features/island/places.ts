@@ -33,18 +33,9 @@ export const islandPlaces: readonly IslandPlace[] = [
   { id: 'bottle', x: 78, y: 528 },
 ]
 
-/** Later places stay "still being built" until a feature flag opens them. */
-export function isOpen(place: IslandPlaceId, features: Features): boolean {
-  switch (place) {
-    case 'mochiHouse':
-    case 'starJar':
-    case 'feelings':
-      return true
-    case 'sulkCloud':
-      return features.sulkEnabled
-    default:
-      return false
-  }
+/** Every illustrated island place has a working destination. */
+export function isOpen(place: IslandPlaceId, _features: Features): boolean {
+  return islandPlaces.some((candidate) => candidate.id === place)
 }
 
 export function isPlaceId(value: string | undefined): value is IslandPlaceId {

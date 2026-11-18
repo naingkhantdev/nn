@@ -17,7 +17,7 @@ import {
   NotificationPrompt,
   shouldOfferPush,
 } from '../settings/NotificationPrompt'
-import { IslandScene } from './IslandScene'
+import { IslandScene, IslandWideScene } from './IslandScene'
 import {
   PLACE_TAP_SIZE,
   SCENE_HEIGHT,
@@ -25,7 +25,8 @@ import {
   islandPlaces,
   isOpen,
 } from './places'
-import { useCurrentWeather } from './weather'
+import { weatherForSulks } from './weather'
+import type { IslandSulk } from './islandRepository'
 import '../auth/auth.css'
 import '../feelings/feelings.css'
 import './island.css'
@@ -47,14 +48,16 @@ const pct = (value: number, total: number) => `${(value / total) * 100}%`
 
 export function IslandScreen({ features }: { features: Features }) {
   const navigate = useNavigate()
-  const weather = useCurrentWeather()
+  const [activeSulks, setActiveSulks] = useState<IslandSulk[]>([])
+  const weather = weatherForSulks(activeSulks, useClock()())
   const visible = usePageVisible()
   const [stillBuilding, setStillBuilding] = useState(false)
-  const { feelings, push } = useServices()
+  const { feelings, push, island } = useServices()
   const [offeringPush, setOfferingPush] = useState(() => shouldOfferPush(push))
   const [mine, setMine] = useState<FeelingDoc | null>(null)
   const [other, setOther] = useState<FeelingDoc | null>(null)
   const [treats, setTreats] = useState<Treat[]>([])
+  useEffect(() => island.watchActiveSulks(setActiveSulks), [island])
   useEffect(() => feelings.watchMine(setMine), [feelings])
   useEffect(() => feelings.watchOther(setOther), [feelings])
   useEffect(() => feelings.watchTreats(setTreats), [feelings])
@@ -74,6 +77,8 @@ export function IslandScreen({ features }: { features: Features }) {
     <div className={`island-screen${visible ? '' : ' island-paused'}`}>
       <div className="island-frame">
         <IslandScene weather={weather} />
+        <IslandWideScene weather={weather} />
+
 
         <div
           className="island-mochi"
@@ -101,11 +106,9 @@ export function IslandScreen({ features }: { features: Features }) {
           <button
             key={place.id}
             type="button"
-            className="island-place"
+            className={`island-place island-place-${place.id}`}
             aria-label={copy.places[place.id]}
             style={{
-              left: pct(place.x, SCENE_WIDTH),
-              top: pct(place.y, SCENE_HEIGHT),
               width: `${PLACE_TAP_SIZE}px`,
               height: `${PLACE_TAP_SIZE}px`,
             }}
@@ -117,6 +120,8 @@ export function IslandScreen({ features }: { features: Features }) {
           />
         ))}
       </div>
+
+
 
       <button
         type="button"

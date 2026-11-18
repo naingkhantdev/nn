@@ -33,6 +33,8 @@ export async function seed(extra?: (db: Db) => Promise<void>) {
     const db = ctx.firestore()
     await setDoc(doc(db, 'config/members'), { uids: ['owner', 'her'] })
     await setDoc(doc(db, 'config/features'), { sulk: false })
+    await setDoc(doc(db, 'profiles/owner'), { displayName: 'Owner', phraseChosen: true })
+    await setDoc(doc(db, 'profiles/her'), { displayName: 'Her', phraseChosen: true })
     if (extra) await extra(db)
   })
 }

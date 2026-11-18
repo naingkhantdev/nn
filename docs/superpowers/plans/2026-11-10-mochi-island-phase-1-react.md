@@ -90,6 +90,10 @@ Unchanged from the Flutter plan:
 | `starPhotos/{starId}` | `fromUid`, `toUid`, `data: bytes` (max 900000) | same as its star. |
 | `openedStars/{uid}/items/{starId}` | `openedAt` | only `uid`. |
 | `openedStars/{uid}/days/{dayNumber}` | `starId` | only `uid`. Create-only. One per Myanmar day. |
+| `islandLetters/{id}` | `kind`, `fromUid`, `toUid`, `opensAt`, `createdAt` | either member reads metadata; either party deletes. |
+| `islandLetterBodies/{id}` | `kind`, `fromUid`, `toUid`, `text`, `opensAt`, `createdAt` | sender reads anytime; recipient reads snail letters anytime and bottle text after `opensAt`. |
+| `gardenMemories/{id}` | `fromUid`, `text`, `createdAt` | members read; creator writes; either member can remove shared memories. |
+| `lanterns/today` | `day`, `litBy`, `updatedAt` | members read and add only their own light for the current Myanmar day; one document is overwritten each day. |
 | `sulks/{id}` | `sulkerUid`, `level`, `reason`, `startedAt`, `endedAt`. Expiry `startedAt + 24h`, calculated. | read by members. See Task 15. |
 | `sulks/{id}/comforts/{cid}` | `fromUid`, `kind`, `text`, `at` | read by members. Non-sulker creates while active. |
 | `sulkPointers/{uid}` | `activeSulkId`, `startedAt` | read by members. Owner of doc writes. |

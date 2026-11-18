@@ -58,7 +58,9 @@ export function createFeelingRepository({ db, auth, notify, isOnline = () => nav
   async function otherUid(uid: string): Promise<string | null> {
     try {
       const snap = await getDoc(doc(db, 'config/members'))
-      return otherUidOf((snap.data()?.uids as string[] | undefined) ?? [], uid)
+      const other = otherUidOf((snap.data()?.uids as string[] | undefined) ?? [], uid)
+      if (!other || !(await getDoc(doc(db, 'profiles', other))).exists()) return null
+      return other
     } catch {
       return null
     }

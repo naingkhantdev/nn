@@ -71,11 +71,10 @@ export function NotificationPrompt({ push, onClose }: Props) {
         : copy.push.body
 
   return (
-    <div className="island-sheet-backdrop">
+    <div className="island-sheet-backdrop island-notification-backdrop">
       <div
         className="island-sheet"
         role="dialog"
-        aria-modal="true"
         aria-labelledby="push-title"
       >
         <Mochi

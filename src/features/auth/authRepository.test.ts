@@ -22,6 +22,7 @@ describe('toAuthFailure', () => {
     expect(code('auth/network-request-failed')).toBe('offline')
     expect(code('auth/too-many-requests')).toBe('tooMany')
     expect(code('auth/requires-recent-login')).toBe('needsReauth')
+    expect(code('permission-denied')).toBe('membership')
   })
 
   it('falls back to unknown, and keeps an existing AuthFailure', () => {

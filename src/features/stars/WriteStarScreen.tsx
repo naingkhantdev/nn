@@ -19,6 +19,29 @@ function previewUrlFor(bytes: Uint8Array): string | null {
   }
 }
 
+function StarNookArt({ landed = false }: { landed?: boolean }) {
+  return (
+    <svg className={landed ? 'star-nook-svg star-nook-landed' : 'star-nook-svg'} viewBox="0 0 380 390" role="presentation" aria-hidden="true">
+      <path d="M42 334V113C42 51 89 22 153 22s111 29 111 91v221Z" fill="var(--sky)" stroke="var(--ink)" strokeWidth="5" />
+      <path d="M59 326V115c0-50 37-76 94-76s94 26 94 76v211Z" fill="var(--sky-deep)" />
+      <path d="M194 82a43 43 0 1 0 42 63 37 37 0 0 1-42-63Z" fill="var(--sun)" />
+      <path d="M94 133 99 146 113 147 102 155 106 169 94 161 82 169 86 155 75 147 89 146Z" fill="var(--cloud)" />
+      <path d="M187 177 191 187 202 188 194 195 197 206 187 200 177 206 180 195 172 188 183 187Z" fill="var(--cloud)" />
+      <path d="M128 212c10-12 31-12 41 0 11-4 23 3 23 14H111c0-8 7-14 17-14Z" fill="var(--cloud)" />
+      <path d="M30 320h268v21H30z" fill="var(--sand)" stroke="var(--ink)" strokeWidth="5" strokeLinejoin="round" />
+      <path d="M80 341v28M249 341v28" stroke="var(--ink)" strokeWidth="7" strokeLinecap="round" />
+      <path d="M112 304h104l-7 13h-91Z" fill="var(--mochi)" stroke="var(--ink)" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M130 298c-3-18 1-47 10-62 6-10 41-10 47 0 9 15 13 44 10 62Z" fill="var(--foam)" stroke="var(--ink)" strokeWidth="4" />
+      <path d="M142 298c-2-18 2-40 8-51 4-6 22-6 27 0 6 11 10 33 8 51Z" fill="var(--sky)" opacity=".75" />
+      <path className="star-nook-jar-star" d="m159 278 4 9 10 1-8 6 3 10-9-6-8 6 3-10-8-6 10-1Z" fill="var(--sun)" stroke="var(--ink)" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M147 231h39v9h-39z" rx="3" fill="var(--accent)" stroke="var(--ink)" strokeWidth="4" />
+      <path d="M239 296c16-9 23-7 38 2l-8 15h-35Z" fill="var(--leaf)" stroke="var(--ink)" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M249 295c-8-17-5-30 5-40M261 300c3-20 13-28 26-30" fill="none" stroke="var(--grass-deep)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M275 270c7-3 12-2 16 2-4 7-10 10-18 9M251 260c-7-4-9-9-8-15 8 0 13 4 16 11" fill="var(--leaf)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export function WriteStarScreen({ compress = defaultCompress }: { compress?: Compress }) {
   const { stars } = useServices()
   const navigate = useNavigate()
@@ -72,8 +95,8 @@ export function WriteStarScreen({ compress = defaultCompress }: { compress?: Com
       await stars.send({ id: draftId, text: text.trim(), photo: photo?.bytes ?? null })
       setStatus('sent')
     } catch (err) {
-      const offline = err instanceof SendFailed && err.reason === 'offline'
-      setMessage(offline ? copy.stars.offline : copy.stars.sendFailed)
+      const reason = err instanceof SendFailed ? err.reason : 'failed'
+      setMessage(reason === 'offline' ? copy.stars.offline : reason === 'rules' ? copy.stars.rulesFailed : reason === 'setup' ? copy.stars.setupFailed : reason === 'partnerMissing' ? copy.stars.noPartner : copy.stars.sendFailed)
       setStatus('failed') // text and photo stay; retry reuses the same draft id
     }
   }
@@ -88,22 +111,23 @@ export function WriteStarScreen({ compress = defaultCompress }: { compress?: Com
 
   if (status === 'sent') {
     return (
-      <div className="auth-screen">
-        <Mochi expression="happy" size={140} />
-        <h1 className="auth-title">{copy.stars.sentTitle}</h1>
-        <p className="auth-intro">{copy.stars.sentBody}</p>
-        <button type="button" className="auth-button" onClick={writeAnother}>
-          {copy.stars.writeAnother}
-        </button>
-        <button type="button" className="auth-link-button" onClick={() => navigate('/place/starJar')}>
-          {copy.stars.backToJar}
-        </button>
-      </div>
+      <main className="star-write-layout star-write-success">
+        <div className="star-write-scene"><StarNookArt landed /></div>
+        <section className="star-write-main star-success-content">
+          <Mochi expression="happy" size={116} />
+          <h1 className="auth-title">{copy.stars.sentTitle}</h1>
+          <p className="auth-intro">{copy.stars.sentBody}</p>
+          <button type="button" className="auth-button" onClick={writeAnother}>{copy.stars.writeAnother}</button>
+          <button type="button" className="auth-link-button" onClick={() => navigate('/place/starJar')}>{copy.stars.backToJar}</button>
+        </section>
+      </main>
     )
   }
 
   return (
-    <form className="auth-screen star-write" onSubmit={send} noValidate>
+    <form className="star-write-layout star-write" data-state={status} onSubmit={send} noValidate>
+      <div className="star-write-scene"><StarNookArt /></div>
+      <div className="star-write-main">
       <h1 className="auth-title">{copy.stars.writeTitle}</h1>
       <p className="auth-intro">{copy.stars.writeHint}</p>
 
@@ -159,9 +183,10 @@ export function WriteStarScreen({ compress = defaultCompress }: { compress?: Com
         </button>
       </div>
 
-      <button type="button" className="auth-link-button" onClick={() => navigate('/place/starJar')}>
+      <button type="button" className="auth-link-button star-write-back" onClick={() => navigate('/place/starJar')}>
         {copy.stars.backToJar}
       </button>
+      </div>
     </form>
   )
 }

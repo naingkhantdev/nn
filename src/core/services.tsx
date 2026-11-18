@@ -2,12 +2,14 @@ import { createContext, useContext, type ReactNode } from 'react'
 import type { FeelingRepository } from '../features/feelings/feelingRepository'
 import type { StarRepository } from '../features/stars/starRepository'
 import type { PushService } from '../platform/push'
+import type { IslandRepository } from '../features/island/islandRepository'
 
 /** Data services for signed-in screens. Real ones in main.tsx; fakes in tests and e2e. */
 export interface Services {
   stars: StarRepository
   feelings: FeelingRepository
   push: PushService
+  island: IslandRepository
 }
 
 const ServicesContext = createContext<Services | null>(null)

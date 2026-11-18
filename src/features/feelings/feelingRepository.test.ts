@@ -10,7 +10,7 @@ const fs = vi.hoisted(() => ({
 vi.mock('firebase/firestore', () => ({
   doc: (_db: unknown, ...segments: string[]) => ({ path: segments.join('/') }),
   collection: (_db: unknown, ...segments: string[]) => ({ path: segments.join('/') }),
-  getDoc: async () => ({ data: () => ({ uids: ['me', 'you'] }) }),
+  getDoc: async () => ({ exists: () => true, data: () => ({ uids: ['me', 'you'] }) }),
   setDoc: async (ref: { path: string }, data: unknown) => {
     fs.calls.push({ op: 'set', path: ref.path, data })
   },
