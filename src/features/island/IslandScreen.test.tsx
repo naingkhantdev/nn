@@ -42,7 +42,7 @@ describe('isOpen', () => {
     expect(isOpen('mochiHouse', off)).toBe(true)
     expect(isOpen('starJar', off)).toBe(true)
     expect(isOpen('feelings', off)).toBe(true)
-    expect(isOpen('sulkCloud', off)).toBe(true)
+    expect(isOpen('sulkCloud', off)).toBe(false)
     expect(isOpen('sulkCloud', on)).toBe(true)
     for (const place of ['snailPost', 'lantern', 'garden', 'bottle'] as const) {
       expect(isOpen(place, off)).toBe(true)
@@ -57,16 +57,22 @@ describe('IslandScreen', () => {
     expect(screen.getByTestId('where')).toHaveTextContent('/place/mochiHouse')
   })
 
+  it("opens the friend's island when its button is tapped", async () => {
+    renderIsland()
+    await userEvent.click(screen.getByRole('button', { name: copy.island.sailCampus }))
+    expect(screen.getByTestId('where')).toHaveTextContent('/visit')
+  })
+
   it('goes to the Star Jar when tapped', async () => {
     renderIsland()
     await userEvent.click(placeButton('starJar'))
     expect(screen.getByTestId('where')).toHaveTextContent('/place/starJar')
   })
 
-  it('opens the sulk cloud when sulk is off', async () => {
+  it('shows the building message when sulk is off', async () => {
     renderIsland({ sulkEnabled: false })
     await userEvent.click(placeButton('sulkCloud'))
-    expect(screen.getByTestId('where')).toHaveTextContent('/place/sulkCloud')
+    expect(screen.getByRole('heading', { name: copy.island.stillBuildingTitle })).toBeInTheDocument()
   })
 
   it('opens the sulk cloud when sulk is on', async () => {
@@ -96,17 +102,19 @@ describe('IslandScreen', () => {
     expect(screen.getByTestId('where')).toHaveTextContent('/settings')
   })
 
-  it("shows the other person's feeling as a bubble, with no time", () => {
+  it("shows the other Mochi's shared feeling, with no time", () => {
     renderIsland(
       { sulkEnabled: false },
       fakeServices({ feelings: fakeFeelingRepository({ watchOther: feelingDoc({ feeling: 'sleepy', setAt: null }) }) }),
     )
-    expect(screen.getByRole('img', { name: `${copy.feelings.bubblePrefix} sleepy` })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: copy.island.friendFeeling('sleepy') })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: copy.island.youMochi })).toBeInTheDocument()
   })
 
-  it('shows no bubble when nothing is shared', () => {
+  it('shows the friend Mochi without a shared feeling', () => {
     renderIsland()
-    expect(screen.queryByRole('img', { name: new RegExp(copy.feelings.bubblePrefix) })).toBeNull()
+    expect(screen.getByRole('img', { name: copy.island.friendMochi })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: copy.island.youMochi })).toBeInTheDocument()
   })
 
   it('a treat arrives once, and saying thanks deletes it', async () => {

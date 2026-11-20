@@ -74,45 +74,8 @@
   width: 100%;
 }
 
-/* The little bubble on the island. */
-.feeling-bubble {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--mochi);
-  box-shadow: 0 3px 8px var(--shadow);
-  pointer-events: none;
-  animation: feeling-float 3s ease-in-out infinite;
-}
-
-.feeling-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background: var(--mochi);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-@keyframes feeling-float {
-  0%,
-  100% {
-    transform: translate(-50%, -100%);
-  }
-  50% {
-    transform: translate(-50%, calc(-100% - 4px));
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .feeling-option,
-  .feeling-bubble {
+  .feeling-option {
     transition: none;
     animation: none;
   }

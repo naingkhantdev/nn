@@ -1,3 +1,4 @@
+import { QuickNotes } from '../QuickNotes'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { copy } from '../../copy/copy'
 import { useServices } from '../../core/services'
@@ -63,6 +64,7 @@ export function SnailPostScreen() {
   return <FeaturePage title={copy.placesUi.snailTitle}>
     <p className="auth-intro">{copy.placesUi.snailIntro}</p>
     <form className="auth-card island-feature-form" onSubmit={submit}>
+      {!text && <QuickNotes choose={setText} />}
       <label className="auth-field">{copy.placesUi.letterLabel}<textarea className="island-feature-text" value={text} maxLength={1000} onChange={(e) => setText(e.target.value)} /></label>
       {error && <p className="auth-message" role="alert">{error}</p>}
       <button className="auth-button" type="submit" disabled={busy || !text.trim()}>{busy ? copy.placesUi.sending : copy.placesUi.sendSnail}</button>
@@ -92,6 +94,7 @@ export function MessageBottleScreen() {
   return <FeaturePage title={copy.placesUi.bottleTitle}>
     <p className="auth-intro">{copy.placesUi.bottleIntro}</p>
     <form className="auth-card island-feature-form" onSubmit={submit}>
+      {!text && <QuickNotes choose={setText} />}
       <label className="auth-field">{copy.placesUi.letterLabel}<textarea className="island-feature-text" value={text} maxLength={1000} onChange={(e) => setText(e.target.value)} /></label>
       <label className="auth-field">{copy.placesUi.openDate}<input type="date" min={dateInputValue(new Date(Date.now() + 86_400_000))} value={date} onChange={(e) => setDate(e.target.value)} /></label>
       {error && <p className="auth-message" role="alert">{error}</p>}

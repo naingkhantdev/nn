@@ -49,6 +49,25 @@ describe('feelings', () => {
   })
 })
 
+describe('activities', () => {
+  it('each person shares their own activity with the other member', async () => {
+    await assertSucceeds(setDoc(doc(asHer(), 'activities/her'), { activity: 'teaching', setAt: serverTimestamp() }))
+    await assertSucceeds(getDoc(doc(asOwner(), 'activities/her')))
+  })
+
+  it('only the activity owner can update or clear it', async () => {
+    await setDoc(doc(asHer(), 'activities/her'), { activity: 'teaching', setAt: serverTimestamp() })
+    await assertFails(setDoc(doc(asOwner(), 'activities/her'), { activity: 'coding', setAt: serverTimestamp() }))
+    await assertFails(deleteDoc(doc(asOwner(), 'activities/her')))
+    await assertSucceeds(deleteDoc(doc(asHer(), 'activities/her')))
+  })
+
+  it('rejects unknown activities and client timestamps', async () => {
+    await assertFails(setDoc(doc(asHer(), 'activities/her'), { activity: 'sleeping', setAt: serverTimestamp() }))
+    await assertFails(setDoc(doc(asHer(), 'activities/her'), { activity: 'teaching', setAt: new Date() }))
+  })
+})
+
 describe('treats', () => {
   const treat = (fromUid: string, toUid: string, kind = 'blanket') => ({ fromUid, toUid, kind })
 

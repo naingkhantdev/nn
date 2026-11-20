@@ -15,15 +15,19 @@ import {
 } from 'firebase/firestore'
 import { otherUidOf } from '../../core/members'
 import type { NotifyClient } from '../../core/notifyClient'
-import { isFeeling, isTreatKind, type Feeling, type FeelingDoc, type Treat, type TreatKind } from './feeling'
+import { isActivity, isFeeling, isTreatKind, type Activity, type ActivityDoc, type Feeling, type FeelingDoc, type Treat, type TreatKind } from './feeling'
 
 export interface FeelingRepository {
   watchMine(cb: (doc: FeelingDoc | null) => void): () => void
   watchOther(cb: (doc: FeelingDoc | null) => void): () => void
+  watchMyActivity(cb: (doc: ActivityDoc | null) => void): () => void
+  watchOtherActivity(cb: (doc: ActivityDoc | null) => void): () => void
   /** Overwrites my one feeling doc. Sends no notification. */
   set(feeling: Feeling): void
   /** "Nothing right now": deletes my feeling doc. */
   clear(): void
+  setActivity(activity: Activity): void
+  clearActivity(): void
   sendTreat(kind: TreatKind): Promise<void>
   /** Treats addressed to me, each shown once and then dismissed. */
   watchTreats(cb: (treats: Treat[]) => void): () => void
@@ -43,6 +47,12 @@ function toFeelingDoc(data: Record<string, unknown> | undefined): FeelingDoc | n
   if (!data || !isFeeling(data.feeling)) return null
   const setAt = data.setAt as Timestamp | null | undefined
   return { feeling: data.feeling, setAt: setAt && typeof setAt.toDate === 'function' ? setAt.toDate() : null }
+}
+
+function toActivityDoc(data: Record<string, unknown> | undefined): ActivityDoc | null {
+  if (!data || !isActivity(data.activity)) return null
+  const setAt = data.setAt as Timestamp | null | undefined
+  return { activity: data.activity, setAt: setAt && typeof setAt.toDate === 'function' ? setAt.toDate() : null }
 }
 
 interface Deps {
@@ -73,6 +83,13 @@ export function createFeelingRepository({ db, auth, notify, isOnline = () => nav
       () => cb(null),
     )
 
+  const watchActivity = (uid: string, cb: (d: ActivityDoc | null) => void) =>
+    onSnapshot(
+      doc(db, 'activities', uid),
+      (snap) => cb(toActivityDoc(snap.data({ serverTimestamps: 'none' }))),
+      () => cb(null),
+    )
+
   return {
     watchMine(cb) {
       const uid = me()
@@ -95,6 +112,27 @@ export function createFeelingRepository({ db, auth, notify, isOnline = () => nav
       }
     },
 
+    watchMyActivity(cb) {
+      const uid = me()
+      if (!uid) return () => {}
+      return watchActivity(uid, cb)
+    },
+
+    watchOtherActivity(cb) {
+      const uid = me()
+      if (!uid) return () => {}
+      let off = () => {}
+      let stopped = false
+      void otherUid(uid).then((other) => {
+        if (stopped || !other) return
+        off = watchActivity(other, cb)
+      })
+      return () => {
+        stopped = true
+        off()
+      }
+    },
+
     // Not awaited: the local cache updates at once and syncs when online.
     set(feeling) {
       const uid = me()
@@ -106,6 +144,18 @@ export function createFeelingRepository({ db, auth, notify, isOnline = () => nav
       const uid = me()
       if (!uid) return
       deleteDoc(doc(db, 'feelings', uid)).catch(() => {})
+    },
+
+    setActivity(activity) {
+      const uid = me()
+      if (!uid) return
+      setDoc(doc(db, 'activities', uid), { activity, setAt: serverTimestamp() }).catch(() => {})
+    },
+
+    clearActivity() {
+      const uid = me()
+      if (!uid) return
+      deleteDoc(doc(db, 'activities', uid)).catch(() => {})
     },
 
     async sendTreat(kind) {

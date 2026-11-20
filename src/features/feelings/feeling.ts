@@ -4,12 +4,20 @@ import type { MochiExpression } from '../mochi/Mochi'
 export const feelings = ['sleepy', 'hungry', 'happy', 'tired', 'bored', 'missingHome'] as const
 export type Feeling = (typeof feelings)[number]
 
+export const activities = ['teaching', 'resting', 'playing', 'eating', 'meeting', 'coding', 'music', 'studying'] as const
+export type Activity = (typeof activities)[number]
+
 export const treatKinds = ['snack', 'blanket', 'hug', 'sweet', 'sticker'] as const
 export type TreatKind = (typeof treatKinds)[number]
 
 export interface FeelingDoc {
   feeling: Feeling
   /** null while the server has not stamped a fresh local write yet. */
+  setAt: Date | null
+}
+
+export interface ActivityDoc {
+  activity: Activity
   setAt: Date | null
 }
 
@@ -33,6 +41,31 @@ export function activeFeeling(doc: FeelingDoc | null, now: number): Feeling | nu
   if (!doc) return null
   if (doc.setAt === null) return doc.feeling // just set on this phone
   return now - doc.setAt.getTime() < FEELING_FADE_MS ? doc.feeling : null
+}
+
+export function isActivity(value: unknown): value is Activity {
+  return typeof value === 'string' && (activities as readonly string[]).includes(value)
+}
+
+export function activeActivity(doc: ActivityDoc | null, now: number): Activity | null {
+  if (!doc) return null
+  if (doc.setAt === null) return doc.activity
+  return now - doc.setAt.getTime() < FEELING_FADE_MS ? doc.activity : null
+}
+
+const activityExpressions: Record<Activity, MochiExpression> = {
+  teaching: 'happy',
+  resting: 'sleepy',
+  playing: 'dancing',
+  eating: 'hungry',
+  meeting: 'idle',
+  coding: 'happy',
+  music: 'dancing',
+  studying: 'tired',
+}
+
+export function expressionForActivity(activity: Activity): MochiExpression {
+  return activityExpressions[activity]
 }
 
 const expressions: Record<Feeling, MochiExpression> = {

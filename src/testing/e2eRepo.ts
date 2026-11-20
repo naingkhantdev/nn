@@ -1,6 +1,6 @@
 import type { Services } from '../core/services'
 import type { AuthRepository } from '../features/auth/authRepository'
-import type { FeelingDoc } from '../features/feelings/feeling'
+import type { ActivityDoc, FeelingDoc } from '../features/feelings/feeling'
 import type { Star } from '../features/stars/star'
 import { fakeIslandRepository } from './fakeServices'
 
@@ -107,8 +107,11 @@ export function createE2eServices(): Services {
 
 function createE2eFeelings(): Services['feelings'] {
   let mine: FeelingDoc | null = null
+  let myActivity: ActivityDoc | null = { activity: 'coding', setAt: null }
   const mineListeners = new Set<(d: FeelingDoc | null) => void>()
+  const activityListeners = new Set<(d: ActivityDoc | null) => void>()
   const emitMine = () => mineListeners.forEach((cb) => cb(mine))
+  const emitActivity = () => activityListeners.forEach((cb) => cb(myActivity))
   return {
     watchMine: (cb) => {
       mineListeners.add(cb)
@@ -119,6 +122,15 @@ function createE2eFeelings(): Services['feelings'] {
       cb({ feeling: 'sleepy', setAt: null })
       return () => {}
     },
+    watchMyActivity: (cb) => {
+      activityListeners.add(cb)
+      cb(myActivity)
+      return () => activityListeners.delete(cb)
+    },
+    watchOtherActivity: (cb) => {
+      cb({ activity: 'teaching', setAt: null })
+      return () => {}
+    },
     set: (feeling) => {
       mine = { feeling, setAt: null }
       emitMine()
@@ -126,6 +138,14 @@ function createE2eFeelings(): Services['feelings'] {
     clear: () => {
       mine = null
       emitMine()
+    },
+    setActivity: (activity) => {
+      myActivity = { activity, setAt: null }
+      emitActivity()
+    },
+    clearActivity: () => {
+      myActivity = null
+      emitActivity()
     },
     sendTreat: () => new Promise((resolve) => setTimeout(resolve, 300)),
     watchTreats: (cb) => {

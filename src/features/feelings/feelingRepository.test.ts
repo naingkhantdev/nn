@@ -58,6 +58,23 @@ describe('feelingRepository', () => {
     expect(fs.calls).toEqual([{ op: 'delete', path: 'feelings/me' }])
   })
 
+  it('sharing an activity overwrites my one doc and notifies nobody', async () => {
+    const { r, notify } = repo()
+    r.setActivity('coding')
+    await Promise.resolve()
+    expect(fs.calls).toEqual([
+      { op: 'set', path: 'activities/me', data: { activity: 'coding', setAt: 'SERVER_TIME' } },
+    ])
+    expect(notify.send).not.toHaveBeenCalled()
+  })
+
+  it('clearing an activity deletes my one doc', async () => {
+    const { r } = repo()
+    r.clearActivity()
+    await Promise.resolve()
+    expect(fs.calls).toEqual([{ op: 'delete', path: 'activities/me' }])
+  })
+
   it('sending a treat writes it to the other person and sends one notification', async () => {
     const { r, notify } = repo()
     await r.sendTreat('blanket')

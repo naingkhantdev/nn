@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { activeFeeling, expressionFor, feelings, treatFor } from './feeling'
+import { activeActivity, activeFeeling, activities, expressionFor, expressionForActivity, feelings, treatFor } from './feeling'
 
 const HOUR = 3_600_000
 const setAt = new Date(Date.UTC(2026, 10, 10, 0, 0))
@@ -17,6 +17,18 @@ describe('activeFeeling', () => {
 
   it('is null when nothing is shared', () => {
     expect(activeFeeling(null, Date.now())).toBeNull()
+  })
+})
+
+describe('activeActivity', () => {
+  it('shows a chosen activity for eight hours, then clears it', () => {
+    const doc = { activity: 'coding' as const, setAt }
+    expect(activeActivity(doc, setAt.getTime() + 8 * HOUR - 60_000)).toBe('coding')
+    expect(activeActivity(doc, setAt.getTime() + 8 * HOUR)).toBeNull()
+  })
+
+  it('maps every activity to a Mochi expression', () => {
+    for (const activity of activities) expect(expressionForActivity(activity)).toBeTruthy()
   })
 })
 

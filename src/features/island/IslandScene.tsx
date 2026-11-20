@@ -41,6 +41,29 @@ function House({ x = 175, y = 330, scale = 1 }: { x?: number; y?: number; scale?
   )
 }
 
+function NeighborIsland({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+  return (
+    <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'} aria-hidden="true">
+      <ellipse cy="11" rx="47" ry="16" fill="var(--foam)" />
+      <ellipse cy="7" rx="42" ry="13" fill="var(--sand)" />
+      <ellipse cy="2" rx="35" ry="11" fill="var(--grass)" />
+      <House x={-8} y={-13} scale={0.45} />
+      <Flower x={24} y={3} tone="var(--accent)" />
+    </g>
+  )
+}
+
+function SharedIsland({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+  return <g transform={`translate(${x} ${y}) scale(${scale})`}>
+    <ellipse cy="12" rx="107" ry="23" fill="var(--foam)" />
+    <ellipse cy="8" rx="103" ry="22" fill="var(--sand)" />
+    <ellipse cy="3" rx="98" ry="19" fill="var(--grass)" />
+    <StarJar x={-66} y={-5} scale={0.7} />
+    <BuildingSpot place="snailPost" x={0} y={-5} />
+    <BuildingSpot place="bottle" x={66} y={-5} />
+  </g>
+}
+
 function StarJar({ x = 268, y = 350, scale = 1 }: { x?: number; y?: number; scale?: number }) {
   return (
     <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'}>
@@ -264,8 +287,6 @@ function landscapeWavePath(y: number, amp: number): string {
 const wideLandmarks = [
   { id: 'garden', x: 640, y: 690 },
   { id: 'lantern', x: 845, y: 700 },
-  { id: 'snailPost', x: 1110, y: 590 },
-  { id: 'bottle', x: 300, y: 785 },
 ] as const
 
 export function IslandWideScene({ weather }: { weather: Weather }) {
@@ -301,7 +322,7 @@ export function IslandWideScene({ weather }: { weather: Weather }) {
       <path className="island-wave island-wave-front" d={landscapeWavePath(715, 13)} fill="var(--sea-deep)" opacity="0.42" />
       <g transform="translate(176 512) scale(4.5)"><Palm x={0} y={0} /></g>
       <House x={610} y={510} scale={2.05} />
-      <StarJar x={965} y={545} scale={1.85} />
+
       <FeelingsSign x={385} y={565} scale={1.75} />
       <SulkCloud x={1170} y={170} scale={2.8} />
       <Flower x={465} y={620} tone="var(--sun)" />
@@ -311,7 +332,8 @@ export function IslandWideScene({ weather }: { weather: Weather }) {
       {wideLandmarks.map((landmark) => (
         <BuildingSpot key={landmark.id} x={landmark.x} y={landmark.y} place={landmark.id} scale={2} />
       ))}
-      <g transform="translate(1280 760)"><ellipse cy="8" rx="78" ry="30" fill="var(--foam)" /><ellipse cy="0" rx="64" ry="25" fill="var(--grass-deep)" /><Flower x={0} y={-18} /></g>
+      <SharedIsland x={930} y={842} scale={1.7} />
+      <NeighborIsland x={1290} y={710} scale={2.2} />
       <PaperBoat x={170} y={830} scale={2.2} />
     </svg>
   )
@@ -351,13 +373,13 @@ export function IslandScene({ weather }: { weather: Weather }) {
       <Flower x={129} y={378} /><Flower x={232} y={373} tone="var(--accent)" /><Flower x={148} y={403} tone="var(--cream)" />
       <Palm x={40} y={330} />
       <path className="island-wave island-wave-front" d={wavePath(470, 7)} fill="var(--sea-deep)" opacity="0.45" />
-      <g transform="translate(308 488)"><g className="island-tiny-island"><ellipse cy="7" rx="23" ry="8" fill="var(--foam)" /><ellipse cy="3" rx="18" ry="7" fill="var(--grass)" /><path d="M0 2 Q-2 -11 2 -19 M2 -18 q-12 -7 -18 0 q10 -4 18 0 q4 -10 14 -7 q-8 2 -14 7" fill="none" stroke="var(--grass-deep)" strokeWidth="3" strokeLinecap="round" /></g></g>
+      <NeighborIsland x={304} y={489} />
       <PaperBoat x={286} y={557} scale={1.2} />
       <House />
-      <StarJar />
+      <SharedIsland x={146} y={487} />
       <FeelingsSign />
       <SulkCloud />
-      {islandPlaces.filter((p) => p.id === 'garden' || p.id === 'lantern' || p.id === 'snailPost' || p.id === 'bottle').map((place) => (
+      {islandPlaces.filter((p) => p.id === 'garden' || p.id === 'lantern').map((place) => (
         <BuildingSpot key={place.id} x={place.x} y={place.y} place={place.id} />
       ))}
     </svg>

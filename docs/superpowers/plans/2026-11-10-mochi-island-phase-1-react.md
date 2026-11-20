@@ -85,6 +85,7 @@ Unchanged from the Flutter plan:
 | `config/features` | `sulk: bool` | read by members. Console-only write. |
 | `profiles/{uid}` | `displayName`, `phraseChosen: bool` | read by members. Owner of doc writes and deletes. |
 | `feelings/{uid}` | `feeling`, `setAt` (= request.time). Expiry `setAt + 8h`, calculated. | read by members. Owner of doc writes and deletes. |
+| `islandVisits/{uid}` | `visitedAt` (= request.time), overwritten on an intentional visit. | read by members. Visitor writes and deletes their own doc. |
 | `treats/{id}` | `fromUid`, `toUid`, `kind` | sender creates. Only recipient reads and deletes. |
 | `stars/{id}` | `fromUid`, `toUid`, `text`, `hasPhoto`, `createdAt` | writer and recipient read. Writer creates. Either deletes. No update. |
 | `starPhotos/{starId}` | `fromUid`, `toUid`, `data: bytes` (max 900000) | same as its star. |

@@ -234,7 +234,8 @@ Made by the designer, not yet agreed by the owner:
 
 - The confession is a separate, later, optional Secret Door.
 - Interface text is mainly Burmese, with Mochi's personality in the writing. All text lives in one easy-to-edit file, and the owner reviews the Burmese before she sees it, because AI-written Burmese can sound wrong.
-- No activity signals between the two people (see Mochi's house and Star Jar).
+- No online or browsing activity signals. An intentional island visit shares
+  only the latest visit time with the other member; no visit history is kept.
 - Sulks fade after 24 hours, and both people can sulk at the same time.
 - Her own secret phrase, the deletion behaviour, and the privacy note on the About page.
 - If the iPhone is slow, simplify before reconsidering Flutter.

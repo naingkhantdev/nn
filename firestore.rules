@@ -14,6 +14,10 @@ service cloud.firestore {
       return isMember() && request.auth.uid == uid;
     }
 
+    function sulkEnabled() {
+      return get(/databases/$(database)/documents/config/features).data.sulk == true;
+    }
+
     // Myanmar day number (UTC+6:30), decided by the server clock.
     // Must match myanmarDayNumber in src/core/time.ts.
     // int(): math.floor returns a float, whose string() would be "20402.0",
@@ -96,6 +100,26 @@ service cloud.firestore {
         && onlyKeys(['feeling', 'setAt'])
         && request.resource.data.feeling in ['sleepy', 'hungry', 'happy', 'tired', 'bored', 'missingHome']
         && request.resource.data.setAt == request.time;
+      allow delete: if isSelf(uid);
+    }
+
+    // Activities are deliberate shares, one current choice per member.
+    // The app fades them after eight hours without storing a last-seen signal.
+    match /activities/{uid} {
+      allow read: if isMember();
+      allow create, update: if isSelf(uid)
+        && onlyKeys(['activity', 'setAt'])
+        && request.resource.data.activity in ['teaching', 'resting', 'playing', 'eating', 'meeting', 'coding', 'music', 'studying']
+        && request.resource.data.setAt == request.time;
+      allow delete: if isSelf(uid);
+    }
+
+    // One shared timestamp for the last intentional visit to a partner island.
+    match /islandVisits/{uid} {
+      allow read: if isMember();
+      allow create, update: if isSelf(uid)
+        && onlyKeys(['visitedAt'])
+        && request.resource.data.visitedAt == request.time;
       allow delete: if isSelf(uid);
     }
 
@@ -218,7 +242,7 @@ service cloud.firestore {
 
     match /sulks/{sulkId} {
       allow read: if isMember();
-      allow create: if isMember()
+      allow create: if isMember() && sulkEnabled()
         && onlyKeys(['sulkerUid', 'level', 'reason', 'startedAt', 'endedAt', 'comfortCount'])
         && request.resource.data.sulkerUid == request.auth.uid
         && request.resource.data.level in ['cloudy', 'rain', 'storm']
@@ -229,7 +253,7 @@ service cloud.firestore {
         && request.resource.data.comfortCount == 0
         && pointerCanStart(request.auth.uid)
         && getAfter(/databases/$(database)/documents/sulkPointers/$(request.auth.uid)).data.activeSulkId == sulkId;
-      allow update: if isMember()
+      allow update: if isMember() && sulkEnabled()
         && ((resource.data.sulkerUid == request.auth.uid
             && activeSulk(resource.data)
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['endedAt'])
@@ -245,7 +269,7 @@ service cloud.firestore {
 
     match /sulkPointers/{uid} {
       allow read: if isMember();
-      allow create, update: if isSelf(uid)
+      allow create, update: if isSelf(uid) && sulkEnabled()
         && onlyKeys(['activeSulkId', 'startedAt'])
         && request.resource.data.activeSulkId is string
         && request.resource.data.startedAt == request.time
@@ -256,7 +280,7 @@ service cloud.firestore {
 
     match /sulkComforts/{comfortId} {
       allow read: if isMember();
-      allow create: if isMember()
+      allow create: if isMember() && sulkEnabled()
         && onlyKeys(['comfortId', 'sulkId', 'fromUid', 'toUid', 'kind', 'text', 'createdAt'])
         && request.resource.data.comfortId == comfortId
         && request.resource.data.fromUid == request.auth.uid

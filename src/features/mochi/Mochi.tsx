@@ -20,6 +20,7 @@ interface MochiProps {
   expression: MochiExpression
   size?: number
   className?: string
+  label?: string
 }
 
 const INK = 'var(--ink)'
@@ -108,7 +109,7 @@ const faces: Record<Exclude<MochiExpression, 'sulking'>, { eyes: ReactNode; mout
 }
 
 /** Mochi: a soft, squishy round friend. Original art, drawn in SVG. */
-export function Mochi({ expression, size = 160, className }: MochiProps) {
+export function Mochi({ expression, size = 160, className, label }: MochiProps) {
   const height = Math.round((size * 180) / 200)
   const sulking = expression === 'sulking'
   const face = sulking ? null : faces[expression]
@@ -116,7 +117,7 @@ export function Mochi({ expression, size = 160, className }: MochiProps) {
   return (
     <svg
       role="img"
-      aria-label={copy.mochi.label[expression]}
+      aria-label={label ?? copy.mochi.label[expression]}
       data-expression={expression}
       className={['mochi', `mochi--${expression}`, className].filter(Boolean).join(' ')}
       width={size}

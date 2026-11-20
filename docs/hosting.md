@@ -1,6 +1,9 @@
 # Free hosting: Mochi Island
 
-Status: **not deployed yet.** This is the plan for when we host it.
+Status: **Firestore rules, indexes, and Hosting deployed on 2026-11-19.**
+The optional notification Worker is not deployed. Android and iPhone sign-in
+smoke checks are still pending. This document remains the plan for future
+deployments.
 Cost: **$0, no card.** Everything below fits on free plans.
 
 | Piece | Free service | Already configured in |

@@ -13,6 +13,7 @@ import {
   query,
   runTransaction,
   serverTimestamp,
+  setDoc,
   where,
   writeBatch,
   type Firestore,
@@ -50,8 +51,10 @@ export interface IslandSulk {
 }
 export interface SulkComfort { id: string; kind: 'hug' | 'note' | 'drops'; text: string; createdAt: Date | null }
 export interface LanternState { day: number; litBy: string[] }
+export interface IslandVisit { visitedAt: Date | null }
 
 export interface IslandRepository {
+  isNoe(): boolean
   myUid(): string
   watchLetters(kind: LetterKind, box: LetterBox, cb: (items: IslandLetter[]) => void): () => void
   writeLetter(kind: LetterKind, text: string, opensAt?: Date): Promise<void>
@@ -60,6 +63,9 @@ export interface IslandRepository {
   deleteMemory(id: string): Promise<void>
   watchLantern(cb: (state: LanternState | null) => void): () => void
   lightLantern(): Promise<void>
+  watchMyVisit(cb: (visit: IslandVisit | null) => void): () => void
+  watchOtherVisit(cb: (visit: IslandVisit | null) => void): () => void
+  visitOtherIsland(): Promise<void>
   watchActiveSulks(cb: (items: IslandSulk[]) => void): () => void
   watchSulkHistory(cb: (items: IslandSulk[]) => void): () => void
   watchComforts(sulkId: string, cb: (items: SulkComfort[]) => void): () => void
@@ -111,6 +117,7 @@ export function createIslandRepository({ db, auth, now = Date.now, isOnline = ()
   }
 
   return {
+    isNoe: () => auth.currentUser?.email?.split('@')[0].toLowerCase() === 'noe',
     myUid: () => auth.currentUser?.uid ?? '',
     watchLetters(kind, box, cb) {
       const uid = auth.currentUser?.uid
@@ -186,6 +193,33 @@ export function createIslandRepository({ db, auth, now = Date.now, isOnline = ()
         const litBy = Number(data?.day) === day ? (data?.litBy as string[] | undefined) ?? [] : []
         transaction.set(ref, { day, litBy: [...new Set([...litBy, uid])], updatedAt: serverTimestamp() })
       })
+    },
+
+    watchMyVisit(cb) {
+      const uid = auth.currentUser?.uid
+      if (!uid) return () => {}
+      return onSnapshot(doc(db, 'islandVisits', uid), (snap) => {
+        cb(snap.exists() ? { visitedAt: dateOf(snap.data().visitedAt) } : null)
+      }, () => cb(null))
+    },
+
+    watchOtherVisit(cb) {
+      const uid = auth.currentUser?.uid
+      if (!uid) return () => {}
+      let off = () => {}
+      let stopped = false
+      void other(uid).then((otherUid) => {
+        if (stopped) return
+        off = onSnapshot(doc(db, 'islandVisits', otherUid), (snap) => {
+          cb(snap.exists() ? { visitedAt: dateOf(snap.data().visitedAt) } : null)
+        }, () => cb(null))
+      }).catch(() => { if (!stopped) cb(null) })
+      return () => { stopped = true; off() }
+    },
+
+    async visitOtherIsland() {
+      const uid = me()
+      await setDoc(doc(db, 'islandVisits', uid), { visitedAt: serverTimestamp() })
     },
 
     watchActiveSulks(cb) {
@@ -265,7 +299,7 @@ export function createIslandRepository({ db, auth, now = Date.now, isOnline = ()
       for (const ref of [...allRefs.values()]) {
         if (ref.path.startsWith('islandLetters/')) { const body = doc(db, 'islandLetterBodies', ref.id); allRefs.set(body.path, body) }
       }
-      for (const path of [`feelings/${uid}`, `profiles/${uid}`, `devices/${uid}`, `lanterns/today`, `sulkPointers/${uid}`]) {
+      for (const path of [`feelings/${uid}`, `activities/${uid}`, `islandVisits/${uid}`, `profiles/${uid}`, `devices/${uid}`, `lanterns/today`, `sulkPointers/${uid}`]) {
         const ref = doc(db, path)
         allRefs.set(ref.path, ref)
       }

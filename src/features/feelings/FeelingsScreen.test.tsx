@@ -31,6 +31,13 @@ describe('FeelingsScreen', () => {
     expect(repo.set).toHaveBeenCalledWith('sleepy')
   })
 
+  it('sharing an activity stores the selected choice', async () => {
+    const repo = fakeFeelingRepository({ setActivity: vi.fn() })
+    renderFeelings(repo)
+    await userEvent.click(screen.getByRole('button', { name: new RegExp(copy.activities.label.coding) }))
+    expect(repo.setActivity).toHaveBeenCalledWith('coding')
+  })
+
   it('"nothing right now" clears it', async () => {
     const repo = fakeFeelingRepository({ clear: vi.fn(), watchMine: feelingDoc({ feeling: 'happy', setAt: new Date(now) }) })
     renderFeelings(repo)

@@ -1,3 +1,4 @@
+import { QuickNotes } from '../QuickNotes'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { copy } from '../../copy/copy'
@@ -132,13 +133,14 @@ export function WriteStarScreen({ compress = defaultCompress }: { compress?: Com
       <p className="auth-intro">{copy.stars.writeHint}</p>
 
       <div className="auth-card star-paper">
+      {!text && <QuickNotes choose={setText} />}
         <label className="auth-field">
           {copy.stars.textLabel}
           <textarea
             className="star-text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            rows={7}
+            rows={3}
             disabled={status === 'sending'}
           />
         </label>

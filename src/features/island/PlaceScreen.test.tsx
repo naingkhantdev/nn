@@ -32,9 +32,9 @@ describe('PlaceScreen', () => {
     expect(screen.getByRole('heading', { name: copy.placesUi.gardenTitle })).toBeInTheDocument()
   })
 
-  it('keeps the sulk cloud available when sulk is off', () => {
+  it('redirects away from the sulk cloud when sulk is off', () => {
     renderAt('/place/sulkCloud')
-    expect(screen.getByRole('heading', { name: copy.placesUi.sulkTitle })).toBeInTheDocument()
+    expect(screen.getByText('island home')).toBeInTheDocument()
   })
 
   it('sends unknown places back to the island', () => {

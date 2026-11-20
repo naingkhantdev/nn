@@ -70,10 +70,34 @@ export const copy = {
     continueHere: 'Carry on here for now',
   },
 
+  quickNotes: ['Thinking of you', 'Have a good day', 'You made me smile'],
+  sharedIsland: 'Our island',
+
   // Island home.
   island: {
     settings: 'Settings',
     back: 'Back to the island',
+    youMochi: 'You',
+    friendMochi: 'Friend',
+    friendFeeling: (feeling: string) => `Friend feels ${feeling}.`,
+    yourActivity: (activity: string) => `You, ${activity}.`,
+    friendActivity: (activity: string) => `Friend, ${activity}.`,
+    khant: 'Khant',
+    noe: 'Noe',
+    campus: 'Noe’s campus',
+    studio: 'Khant’s studio',
+    sailCampus: 'Sail to Noe’s campus',
+    sailStudio: 'Sail to Khant’s studio',
+    visitFriendIsland: "Visit friend's island",
+    friendIslandTitle: "Friend's island",
+    visitingFriendIsland: "You're visiting your friend's island.",
+    myLastVisit: (time: string) => `You visited your friend's island ${time}.`,
+    friendLastVisit: (time: string) => `Your island was visited ${time}.`,
+    visitNow: 'Just now',
+    visitMinutes: (minutes: number) => `${minutes} min ago`,
+    visitHours: (hours: number) => `${hours} hr ago`,
+    visitDays: (days: number) => `${days} day${days === 1 ? '' : 's'} ago`,
+    visitOffline: 'Couldn’t share this visit. Try again when online.',
     stillBuildingTitle: 'Still being built',
     stillBuildingBody:
       'Mochi is still building this part of the island. Come and peek again another day!',
@@ -114,8 +138,7 @@ export const copy = {
     justNow: 'just now',
 
     writeTitle: 'Write a star',
-    writeHint:
-      'Something kind, a memory, a little joke... it will wait in the jar.',
+    writeHint: 'Write a kind note or joke.',
     textLabel: 'Your star',
     addPhoto: 'Add a photo',
     changePhoto: 'Change photo',
@@ -143,9 +166,8 @@ export const copy = {
     noPartner: "The island is quiet for now. Your words are still here.",
     // Opening stars (the recipient's own jar).
     jarLabel: 'Your star jar',
-    jarReady: "Tap the jar to open today's star.",
-    jarReadyShake:
-      "Tap the jar, or give your phone a little shake, to open today's star.",
+    jarReady: "Tap to open today's star.",
+    jarReadyShake: "Tap or shake for today's star.",
     jarEmpty: 'Your jar is resting for now. New stars will float in.',
     jarDoneToday: "You've opened today's star. Another one tomorrow!",
     comeBackTomorrow:
@@ -194,6 +216,25 @@ export const copy = {
     treatFailed: "Mochi couldn't carry it just now. Try again in a moment?",
   },
 
+  activities: {
+    title: 'My day',
+    intro: 'Pick an activity to share.',
+    mineTitle: 'You',
+    friendTitle: "Friend's island",
+    none: 'No activity shared.',
+    clear: 'Nothing now',
+    label: {
+      teaching: 'Teaching',
+      resting: 'Resting',
+      playing: 'Playing',
+      eating: 'Eating',
+      meeting: 'Meeting',
+      coding: 'Coding',
+      music: 'Music',
+      studying: 'Studying',
+    },
+  },
+
   // Working island places. No labels are added to the map itself.
   placesUi: {
     loading: 'Mochi is bringing this little place to life...',
@@ -212,7 +253,7 @@ export const copy = {
     cloudGone: 'This cloud has already drifted away.',
     sulkOnlyOwner: 'Only the cloud-maker can let this one drift off.',
     snailTitle: 'Snail Post',
-    snailIntro: 'A tiny snail will carry your note across the island.',
+    snailIntro: 'Send a little note across the island.',
     letterLabel: 'Your letter',
     incoming: 'Letters for you',
     sentLetters: 'Letters you sent',
@@ -221,7 +262,7 @@ export const copy = {
     sendSnail: 'Send with the snail',
     sending: 'The snail is on its way...',
     bottleTitle: 'Message in a Bottle',
-    bottleIntro: 'Seal a little note and choose the day it may be opened.',
+    bottleIntro: 'Pick a day to open your note.',
     openDate: 'Open on',
     sealBottle: 'Seal the bottle',
     bottlesForYou: 'Bottles for you',

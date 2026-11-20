@@ -27,6 +27,8 @@ Safari. This checkout uses React; the older Flutter plan is historical.
   you" states. Mochi never dies or gets sick.
 - No surveillance: no location, online/last-seen indicators, visible read
   tracking, or hidden analytics.
+- Intentional island visits share only the most recent visit time with the
+  other member; do not track browsing or online presence.
 - Users must be able to leave and delete their data from inside the app.
 - Keep art, names, and styling original; no borrowed brands.
 

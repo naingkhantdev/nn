@@ -4,7 +4,7 @@ import { useClock } from '../../core/clock'
 import { useServices } from '../../core/services'
 import { BackToIsland } from '../island/BackToIsland'
 import { Mochi } from '../mochi/Mochi'
-import { activeFeeling, expressionFor, feelings, treatFor, type FeelingDoc } from './feeling'
+import { activeActivity, activeFeeling, activities, expressionFor, expressionForActivity, feelings, treatFor, type ActivityDoc, type FeelingDoc } from './feeling'
 import { useMinuteTick } from './useMinuteTick'
 import '../auth/auth.css'
 import './feelings.css'
@@ -15,15 +15,21 @@ export function FeelingsScreen() {
   useMinuteTick()
   const [mine, setMine] = useState<FeelingDoc | null>(null)
   const [other, setOther] = useState<FeelingDoc | null>(null)
+  const [myActivity, setMyActivity] = useState<ActivityDoc | null>(null)
+  const [friendActivity, setFriendActivity] = useState<ActivityDoc | null>(null)
   const [treatNote, setTreatNote] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
 
   useEffect(() => repo.watchMine(setMine), [repo])
   useEffect(() => repo.watchOther(setOther), [repo])
+  useEffect(() => repo.watchMyActivity(setMyActivity), [repo])
+  useEffect(() => repo.watchOtherActivity(setFriendActivity), [repo])
 
   const now = clock()
   const myFeeling = activeFeeling(mine, now)
   const theirFeeling = activeFeeling(other, now)
+  const myCurrentActivity = activeActivity(myActivity, now)
+  const friendCurrentActivity = activeActivity(friendActivity, now)
 
   async function sendTreat() {
     if (!theirFeeling || sending) return
@@ -70,6 +76,49 @@ export function FeelingsScreen() {
         >
           {copy.feelings.nothing}
         </button>
+      </section>
+
+      <section className="auth-card" aria-labelledby="my-day-title">
+        <h2 id="my-day-title" className="feelings-section-title">
+          {copy.activities.title}
+        </h2>
+        <p className="auth-intro">{copy.activities.intro}</p>
+        <div className="feelings-grid">
+          {activities.map((activity) => (
+            <button
+              key={activity}
+              type="button"
+              className="feeling-option"
+              aria-pressed={myCurrentActivity === activity}
+              onClick={() => repo.setActivity(activity)}
+            >
+              <Mochi expression={expressionForActivity(activity)} size={48} />
+              <span>{copy.activities.label[activity]}</span>
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="feeling-nothing"
+          aria-pressed={myCurrentActivity === null}
+          onClick={() => repo.clearActivity()}
+        >
+          {copy.activities.clear}
+        </button>
+      </section>
+
+      <section className="auth-card" aria-labelledby="friend-day-title">
+        <h2 id="friend-day-title" className="feelings-section-title">
+          {copy.activities.friendTitle}
+        </h2>
+        {friendCurrentActivity ? (
+          <div className="feelings-other">
+            <Mochi expression={expressionForActivity(friendCurrentActivity)} size={72} />
+            <p className="feelings-other-label">{copy.activities.label[friendCurrentActivity]}</p>
+          </div>
+        ) : (
+          <p className="auth-intro">{copy.activities.none}</p>
+        )}
       </section>
 
       <section className="auth-card" aria-labelledby="other-title">

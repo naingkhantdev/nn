@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router'
 import { copy } from '../../copy/copy'
 import type { Features } from '../../core/members'
 import { IslandScreen } from '../island/IslandScreen'
+import { FriendIslandScreen } from '../island/FriendIslandScreen'
 import { PlaceScreen, SettingsScreen } from '../island/PlaceScreen'
 import { Mochi } from '../mochi/Mochi'
 import { KeepsakesScreen } from '../stars/KeepsakesScreen'
@@ -72,7 +73,7 @@ export function AppRoutes({ repo, useFeatures = noFeatures }: AppRoutesProps) {
   const target = targetFor(session)
   const features = useFeatures(session.status === 'signedIn' && session.phraseChosen)
 
-  // Island routes (/, /place/:id, /settings) all share the '/' guard.
+  // Signed-in island routes all share the '/' guard.
   const guard = (here: Path, screen: ReactNode) => {
     if (target === null) return <LoadingScreen />
     if (target !== here) return <Navigate to={target} replace />
@@ -90,6 +91,7 @@ export function AppRoutes({ repo, useFeatures = noFeatures }: AppRoutesProps) {
         )}
       />
       <Route path="/" element={guard('/', <IslandScreen features={features} />)} />
+      <Route path="/visit" element={guard('/', <FriendIslandScreen />)} />
       <Route path="/place/:id" element={guard('/', <PlaceScreen features={features} />)} />
       <Route path="/settings" element={guard('/', <SettingsScreen signOut={repo.signOut} deleteAccount={repo.deleteAccount} />)} />
       <Route path="/stars/write" element={guard('/', <WriteStarScreen />)} />

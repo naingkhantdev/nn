@@ -16,8 +16,18 @@ export function fakeFeelingRepository(overrides: Partial<FeelingRepository> = {}
       cb(null)
       return () => {}
     },
+    watchMyActivity: (cb) => {
+      cb(null)
+      return () => {}
+    },
+    watchOtherActivity: (cb) => {
+      cb(null)
+      return () => {}
+    },
     set: () => {},
     clear: () => {},
+    setActivity: () => {},
+    clearActivity: () => {},
     sendTreat: async () => {},
     watchTreats: (cb) => {
       cb([])
@@ -61,6 +71,7 @@ export function fakeServices(overrides: Partial<Services> = {}): Services {
 
 export function fakeIslandRepository(overrides: Partial<IslandRepository> = {}): IslandRepository {
   return {
+    isNoe: () => false,
     myUid: () => 'e2e-user',
     watchLetters: (_kind, _box, cb) => { cb([]); return () => {} },
     writeLetter: async () => {},
@@ -69,6 +80,9 @@ export function fakeIslandRepository(overrides: Partial<IslandRepository> = {}):
     deleteMemory: async () => {},
     watchLantern: (cb) => { cb(null); return () => {} },
     lightLantern: async () => {},
+    watchMyVisit: (cb) => { cb(null); return () => {} },
+    watchOtherVisit: (cb) => { cb(null); return () => {} },
+    visitOtherIsland: async () => {},
     watchActiveSulks: (cb) => { cb([]); return () => {} },
     watchSulkHistory: (cb) => { cb([]); return () => {} },
     watchComforts: (_id, cb) => { cb([]); return () => {} },
