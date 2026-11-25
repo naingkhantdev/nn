@@ -89,11 +89,28 @@
 .island-settings-page { width: min(100%, 520px); min-height: 100dvh; align-content: center; }
 
 .snail-station .island-feature-form {
-  border-top: 7px solid transparent;
-  border-image: repeating-linear-gradient(120deg, var(--accent) 0 12px, var(--cream) 12px 22px, var(--sea-deep) 22px 34px, var(--cream) 34px 44px) 8;
   background: var(--cream);
+  border: 2px solid var(--ink-soft);
+  border-radius: 8px 24px 8px 24px;
+  box-shadow: 4px 5px 0 var(--sand);
 }
-.snail-station textarea {
-  line-height: 1.8;
-  background: repeating-linear-gradient(to bottom, var(--cream) 0 calc(1.8em - 1px), var(--sand) calc(1.8em - 1px) 1.8em);
+.snail-station textarea { background: var(--mochi); line-height: 1.7; }
+.snail-station summary { cursor: pointer; }
+
+.bottle-shore .island-feature-form {
+  border: 2px solid var(--sea-deep);
+  border-radius: 20px;
+  background: var(--foam);
 }
+.bottle-shore textarea {
+  background: var(--cream);
+  line-height: 1.7;
+}
+.bottle-shore input[type="date"] {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  color: var(--ink);
+  background: var(--mochi);
+}
+.bottle-shore summary { cursor: pointer; }

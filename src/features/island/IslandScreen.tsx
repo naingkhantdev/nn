@@ -20,7 +20,9 @@ import {
   NotificationPrompt,
   shouldOfferPush,
 } from '../settings/NotificationPrompt'
+import { PlayfulMochi } from './PlayfulMochi'
 import { IslandScene, IslandWideScene } from './IslandScene'
+import { WaterPlay } from './WaterPlay'
 import { usePageVisible } from './usePageVisible'
 import {
   PLACE_TAP_SIZE,
@@ -31,7 +33,7 @@ import {
 } from './places'
 import { weatherForSulks } from './weather'
 import { formatVisitAge } from './visitTime'
-import type { IslandSulk } from './islandRepository'
+import type { IslandVisit, IslandSulk } from './islandRepository'
 import '../auth/auth.css'
 import '../feelings/feelings.css'
 import './island.css'
@@ -50,8 +52,8 @@ export function IslandScreen({ features }: { features: Features }) {
   const [other, setOther] = useState<FeelingDoc | null>(null)
   const [myActivity, setMyActivity] = useState<ActivityDoc | null>(null)
   const [friendActivity, setFriendActivity] = useState<ActivityDoc | null>(null)
-  const [myVisit, setMyVisit] = useState<{ visitedAt: Date | null } | null>(null)
-  const [friendVisit, setFriendVisit] = useState<{ visitedAt: Date | null } | null>(null)
+  const [myVisit, setMyVisit] = useState<IslandVisit | null>(null)
+  const [friendVisit, setFriendVisit] = useState<IslandVisit | null>(null)
   const [treats, setTreats] = useState<Treat[]>([])
   useEffect(() => {
     if (!features.sulkEnabled) return
@@ -64,6 +66,8 @@ export function IslandScreen({ features }: { features: Features }) {
   useEffect(() => island.watchMyVisit(setMyVisit), [island])
   useEffect(() => island.watchOtherVisit(setFriendVisit), [island])
   useEffect(() => feelings.watchTreats(setTreats), [feelings])
+  const [travelFailed, setTravelFailed] = useState(false)
+  useEffect(() => { void island.chooseIsland('shared').catch(() => setTravelFailed(true)) }, [island])
   useMinuteTick()
 
   const now = useClock()()
@@ -86,8 +90,10 @@ export function IslandScreen({ features }: { features: Features }) {
   return (
     <div className={`island-screen${visible ? '' : ' island-paused'}`}>
       <div className="island-frame">
+        {travelFailed && <p role="status">{copy.island.visitOffline}</p>}
         <IslandScene weather={weather} />
         <IslandWideScene weather={weather} />
+        <WaterPlay />
 
 
         {friendVisit?.visitedAt && (
@@ -99,7 +105,8 @@ export function IslandScreen({ features }: { features: Features }) {
           className="island-mochi island-mochi-you"
           style={{ left: pct(185, SCENE_WIDTH), top: pct(352, SCENE_HEIGHT) }}
         >
-          <Mochi
+          <PlayfulMochi together={friendVisit?.destination === 'shared'}
+            bow={island.isNoe()}
             expression={mood}
             size={40}
             label={myCurrentActivity
@@ -109,11 +116,12 @@ export function IslandScreen({ features }: { features: Features }) {
           <span className="island-mochi-name" aria-hidden="true">{island.isNoe() ? copy.island.noe : copy.island.khant}</span>
           {myCurrentActivity && <span className="island-mochi-activity" aria-hidden="true">{copy.activities.label[myCurrentActivity]}</span>}
         </div>
-        <div
-          className="island-mochi island-mochi-friend"
-          style={{ left: pct(332, SCENE_WIDTH), top: pct(473, SCENE_HEIGHT) }}
+        {(friendVisit?.destination === 'shared') && <div
+          className={`island-mochi island-mochi-friend${island.isNoe() ? "" : " island-mochi-noe"}`}
+          style={{ left: pct(282, SCENE_WIDTH), top: pct(365, SCENE_HEIGHT) }}
         >
           <Mochi
+            bow={!island.isNoe()}
             expression={friendExpression}
             size={40}
             label={friendCurrentActivity
@@ -124,9 +132,20 @@ export function IslandScreen({ features }: { features: Features }) {
           />
           <span className="island-mochi-name" aria-hidden="true">{island.isNoe() ? copy.island.khant : copy.island.noe}</span>
           {friendCurrentActivity && <span className="island-mochi-activity" aria-hidden="true">{copy.activities.label[friendCurrentActivity]}</span>}
-        </div>
+        </div>}
 
-        <span className="shared-island-name">{copy.sharedIsland}</span>
+        <button
+          type="button"
+          className={`shared-destination shared-destination-${island.isNoe() ? 'khant' : 'noe'}`}
+          aria-label={copy.islandName(island.isNoe() ? copy.island.khant : copy.island.noe)}
+          onClick={() => navigate('/visit', { state: { sailing: true } })}
+        />
+        <button
+          type="button"
+          className={`shared-destination shared-destination-${island.isNoe() ? 'noe' : 'khant'}`}
+          aria-label={copy.islandName(island.isNoe() ? copy.island.noe : copy.island.khant)}
+          onClick={() => navigate('/', { state: { sailing: true } })}
+        />
         {islandPlaces.map((place) => (
           <button
             key={place.id}
@@ -144,12 +163,6 @@ export function IslandScreen({ features }: { features: Features }) {
             }
           />
         ))}
-        <nav className="island-dock" aria-label={copy.sharedIsland}>
-          <button type="button" onClick={() => navigate('/my-island')}>{copy.myIsland}</button>
-          <button type="button" onClick={() => navigate('/visit', { state: { sailing: true } })}>
-            {copy.visitIsland(island.isNoe() ? copy.island.khant : copy.island.noe)}
-          </button>
-        </nav>
         {myVisit?.visitedAt && (
           <p className="island-my-visit-note" aria-live="polite">
             {copy.island.myLastVisit(formatVisitAge(myVisit.visitedAt, now))}

@@ -7,6 +7,7 @@ import type { Features } from '../../core/members'
 import { IslandScreen } from './IslandScreen'
 import { ServicesProvider, type Services } from '../../core/services'
 import {
+  fakeIslandRepository,
   fakeFeelingRepository,
   fakePushService,
   fakeServices,
@@ -57,10 +58,12 @@ describe('IslandScreen', () => {
     expect(screen.getByTestId('where')).toHaveTextContent('/place/mochiHouse')
   })
 
-  it("opens the friend's island when its button is tapped", async () => {
+  it('shows shared places and tappable island destinations', () => {
     renderIsland()
-    await userEvent.click(screen.getByRole('button', { name: copy.visitIsland(copy.island.noe) }))
-    expect(screen.getByTestId('where')).toHaveTextContent('/visit')
+    expect(placeButton('snailPost')).toBeInTheDocument()
+    for (const member of [copy.island.noe, copy.island.khant]) {
+      expect(screen.getByRole('button', { name: copy.islandName(member) })).toBeInTheDocument()
+    }
   })
 
   it('goes to the Star Jar when tapped', async () => {
@@ -105,14 +108,14 @@ describe('IslandScreen', () => {
   it("shows the other Mochi's shared feeling, with no time", () => {
     renderIsland(
       { sulkEnabled: false },
-      fakeServices({ feelings: fakeFeelingRepository({ watchOther: feelingDoc({ feeling: 'sleepy', setAt: null }) }) }),
+      fakeServices({ island: fakeIslandRepository({ watchOtherVisit: cb => { cb({ visitedAt: null, destination: 'shared' }); return () => {} } }), feelings: fakeFeelingRepository({ watchOther: feelingDoc({ feeling: 'sleepy', setAt: null }) }) }),
     )
     expect(screen.getByRole('img', { name: copy.island.friendFeeling('sleepy') })).toBeInTheDocument()
     expect(screen.getByRole('img', { name: copy.island.youMochi })).toBeInTheDocument()
   })
 
   it('shows the friend Mochi without a shared feeling', () => {
-    renderIsland()
+    renderIsland(undefined, fakeServices({ island: fakeIslandRepository({ watchOtherVisit: cb => { cb({ visitedAt: null, destination: 'shared' }); return () => {} } }) }))
     expect(screen.getByRole('img', { name: copy.island.friendMochi })).toBeInTheDocument()
     expect(screen.getByRole('img', { name: copy.island.youMochi })).toBeInTheDocument()
   })

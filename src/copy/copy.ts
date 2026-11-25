@@ -71,12 +71,14 @@ export const copy = {
   },
 
   quickNotes: ['Thinking of you', 'Have a good day', 'You made me smile'],
-  sharedIsland: 'Between Islands',
-  myIsland: 'My island',
-  visitIsland: (name: string) => `Visit ${name}’s island`,
+  sharedIsland: 'Open the shared island',
+  returnHome: 'Return home',
+  islandName: (name: string) => `${name}’s island`,
 
   // Island home.
   island: {
+    playWithMochi: (name: string) => `Play with ${name}`,
+    playWater: 'Tap the sea for a jumping fish and splash',
     settings: 'Settings',
     back: 'Back to the island',
     youMochi: 'You',
@@ -254,6 +256,7 @@ export const copy = {
     comfortTooLong: 'Keep the note under 200 characters.',
     cloudGone: 'This cloud has already drifted away.',
     sulkOnlyOwner: 'Only the cloud-maker can let this one drift off.',
+    quickNotesTitle: 'Quick notes',
     snailTitle: 'Snail Post',
     snailIntro: 'Send a little note across the island.',
     letterLabel: 'Your letter',
@@ -264,7 +267,7 @@ export const copy = {
     sendSnail: 'Send with the snail',
     sending: 'The snail is on its way...',
     bottleTitle: 'Message in a Bottle',
-    bottleIntro: 'Pick a day to open your note.',
+    bottleIntro: 'Choose the day your friend can open your letter.',
     openDate: 'Open on',
     sealBottle: 'Seal the bottle',
     bottlesForYou: 'Bottles for you',

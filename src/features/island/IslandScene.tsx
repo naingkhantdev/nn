@@ -1,3 +1,4 @@
+import { PersonalIslandArt } from './VisitScene'
 import { SCENE_HEIGHT, SCENE_WIDTH, islandPlaces, type IslandPlaceId } from './places'
 import { WeatherLayer } from './WeatherLayer'
 import type { Weather } from './weather'
@@ -41,19 +42,7 @@ function House({ x = 175, y = 330, scale = 1 }: { x?: number; y?: number; scale?
   )
 }
 
-function NeighborIsland({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
-  return (
-    <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'} aria-hidden="true">
-      <ellipse cy="11" rx="47" ry="16" fill="var(--foam)" />
-      <ellipse cy="7" rx="42" ry="13" fill="var(--sand)" />
-      <ellipse cy="2" rx="35" ry="11" fill="var(--grass)" />
-      <House x={-8} y={-13} scale={0.45} />
-      <Flower x={24} y={3} tone="var(--accent)" />
-    </g>
-  )
-}
-
-function SharedIsland({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+export function SharedIsland({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
   return <g transform={`translate(${x} ${y}) scale(${scale})`}>
     <ellipse cy="12" rx="107" ry="23" fill="var(--foam)" />
     <ellipse cy="8" rx="103" ry="22" fill="var(--sand)" />
@@ -64,20 +53,20 @@ function SharedIsland({ x, y, scale = 1 }: { x: number; y: number; scale?: numbe
   </g>
 }
 
-function StarJar({ x = 268, y = 350, scale = 1 }: { x?: number; y?: number; scale?: number }) {
+export function StarJar({ x, y, scale = 1, full = true }: { x: number; y: number; scale?: number; full?: boolean }) {
   return (
-    <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'}>
-      <ellipse cy="29" rx="27" ry="6" fill="var(--grass-deep)" opacity="0.3" />
-      <path d="M-24 27 H24 L19 32 H-19 Z" fill="var(--sand)" stroke="var(--ink)" strokeWidth="1.8" />
-      <path d="M-18 31 V35 M18 31 V35" stroke="var(--ink)" strokeWidth="2" />
-      <rect x="-13" y="-29" width="26" height="8" rx="2" fill="var(--sand)" stroke="var(--ink)" strokeWidth="2" />
-      <path d="M-10 -21 V-16 C-18 -13 -21 -8 -21 0 V17 Q-21 25 -13 25 H13 Q21 25 21 17 V0 C21 -8 18 -13 10 -16 V-21 Z" fill="var(--foam)" fillOpacity="0.86" stroke="var(--ink)" strokeWidth="2.5" />
-      <path d="M-15 -12 Q-18 -8 -18 0 V15" fill="none" stroke="white" strokeOpacity="0.9" strokeWidth="3" strokeLinecap="round" />
-      <path d="M-10 -17 H10 M-12 -25 H12" fill="none" stroke="var(--ink-soft)" strokeWidth="1.4" />
-      <path className="island-jar-star" d="M-7 6 -5 1 0 5 5 -3 8 8 2 14 -6 12 Z" fill="var(--sun)" stroke="var(--accent-ink)" strokeWidth="1" />
-      <path d="M-12 9 -10 6 -8 9 -10 12 Z M10 4 11 2 13 4 11 6 Z" fill="var(--cream)" stroke="var(--accent-ink)" strokeWidth="0.7" />
-      <path d="M-2 -7 0 -12 2 -7" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="9" cy="-10" r="1.5" fill="var(--cloud)" />
+    <g transform={`translate(${x} ${y}) scale(${scale})`} strokeLinejoin="round">
+      <ellipse cy="29" rx="25" ry="4" fill="var(--shadow)" />
+      <path d="M-14 -24 H14 V-17 C16 -11 25 -9 25 5 Q27 26 13 28 H-13 Q-27 26 -25 5 C-25 -9 -16 -11 -14 -17Z" fill="var(--cream)" stroke="var(--ink)" strokeWidth="2.4" />
+      <rect x="-17" y="-30" width="34" height="8" rx="3" fill="var(--sand)" stroke="var(--ink)" strokeWidth="2" />
+      <path d="M-15 -18 Q0 -15 15 -18 M12 -18 Q27 -31 22 -17 L13 -16 L23 -9" fill="none" stroke="var(--accent-ink)" strokeWidth="2.2" strokeLinecap="round" />
+      {full && [[-9,14,-16], [9,16,12], [2,0,6]].map(([cx,cy,angle]) => (
+        <g key={cx} transform={`translate(${cx} ${cy}) rotate(${angle})`}>
+          <path d="m0 -9 3 5.5 6 .8 -4.2 4.4 .9 6.3L0 5l-5.7 3 .9 -6.3L-9 -2.7l6 -.8Z" fill="var(--sun)" stroke="var(--ink-soft)" strokeWidth="1" />
+          <path d="M0 -8 1 1l4 6M1 1l-9 -3" fill="none" stroke="var(--cream)" strokeWidth="1.2" />
+        </g>
+      ))}
+      <path d="M-17 -7 Q-21 -3 -21 5" fill="none" stroke="var(--sky-deep)" strokeWidth="2.6" strokeLinecap="round" />
     </g>
   )
 }
@@ -161,30 +150,36 @@ export function SnailPost({ x, y, scale = 1 }: { x: number; y: number; scale?: n
   return (
     <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'}>
       <ellipse cy="12" rx="22" ry="6" fill="var(--grass-deep)" opacity="0.35" />
-      <g stroke="var(--ink)" strokeWidth="2" strokeLinejoin="round">
-        <path d="M-20 9 V-10 A20 20 0 0 1 20 -10 V9Z" fill="var(--cream)" />
-        <path d="M-23 -9 C-26 -36 7 -44 18 -25 Q28 -10 14 -5 C2 0 -9 -8 -7 -18 C-4 -27 8 -26 9 -19 Q10 -12 3 -14" fill="var(--accent)" />
-        <rect x="1" y="-4" width="14" height="10" rx="1" fill="var(--mochi)" />
-        <path d="m2 -3 6 5 6 -5" fill="none" />
-      </g>
-      <g className="island-mail-snail">
-      <path d="M-10 8 Q-10 2 -4 2 H3 Q9 2 9 8 Z" fill="var(--sand)" stroke="var(--ink)" strokeWidth="1.5" />
-      <circle cx="-4" cy="0" r="5" fill="var(--mochi)" stroke="var(--ink)" strokeWidth="1.5" />
-      <path d="M-6 -5 Q-5 -11 -2 -8 M-6 0 H-4" fill="none" stroke="var(--ink)" strokeWidth="1.4" strokeLinecap="round" />
+      <g stroke="var(--ink)" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
+        <path d="M-25 7 Q-17 6 -15 0 Q-7 -9 6 -2 Q12 2 15 -7 Q16 -13 21 -12 Q28 -11 25 -3 Q24 8 15 10 H-18Z" fill="var(--sand)" />
+        <path d="m18 -11 -2 -7 m7 7 4 -6" fill="none" />
+        <circle cx="22" cy="-7" r="1" fill="var(--ink)" />
+        <circle cx="-5" cy="-5" r="12" fill="var(--leaf)" />
+        <path d="M-13 -5 Q-12 -14 -4 -12 Q5 -10 1 -4 Q-2 1 -6 -2 Q-9 -5 -5 -6" fill="none" />
+        <g transform="rotate(-12 -8 -20)">
+          <rect x="-20" y="-29" width="23" height="15" rx="2" fill="var(--cream)" />
+          <path d="m-19 -27 11 7 10 -7" fill="none" />
+          <path d="M-9 -15 V-3" stroke="var(--accent-ink)" strokeWidth="3" />
+        </g>
       </g>
     </g>
   )
 }
 
-function MessageBottle({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+export function MessageBottle({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
   return (
-    <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'}>
-      <ellipse cy="13" rx="30" ry="8" fill="var(--foam)" opacity="0.75" />
-      <g transform="rotate(-18)">
-        <path d="M-29 -5 Q-29 -10 -23 -10 H-11 V-15 H11 V-10 H23 Q29 -10 29 -5 V5 Q29 11 22 11 H-22 Q-29 11 -29 5 Z" fill="var(--sea-deep)" fillOpacity="0.45" stroke="var(--ink)" strokeWidth="2.5" />
-        <rect x="-13" y="-18" width="26" height="7" rx="2" fill="var(--sand)" stroke="var(--ink)" strokeWidth="1.5" />
-        <path d="M-22 -4 V2 M-17 -6 V2 M-7 -7 H7" stroke="var(--mochi)" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" />
-        <path d="M-4 -4 Q3 -1 8 3" fill="none" stroke="var(--sun)" strokeWidth="1.5" />
+    <g transform={`translate(${x} ${y}) scale(${scale})`} strokeLinejoin="round" strokeLinecap="round">
+      <path d="M-32 16 Q-22 12 -12 16 T8 16 T30 15" fill="none" stroke="var(--sea-deep)" strokeWidth="2" />
+      <g transform="rotate(49)">
+        <path d="M-5 -25 H5 V-13 Q5 -9 11 -6 Q15 -4 15 3 V21 Q15 26 10 26 H-10 Q-15 26 -15 21 V3 Q-15 -4 -11 -6 Q-5 -9 -5 -13Z" fill="var(--sea)" stroke="var(--ink)" strokeWidth="2.4" />
+        <g transform="rotate(-10 0 9)">
+          <rect x="-6" y="-3" width="12" height="25" rx="3" fill="var(--cream)" stroke="var(--ink-soft)" strokeWidth="1.3" />
+          <ellipse cy="-2" rx="5" ry="1.6" fill="var(--sand)" stroke="var(--ink-soft)" strokeWidth="1" />
+          <path d="M-6 8H6 M-6 10H6" stroke="var(--accent-ink)" strokeWidth="1.5" />
+        </g>
+        <path d="M-11 4v9" stroke="var(--foam)" strokeWidth="2.2" />
+        <rect x="-5" y="-30" width="10" height="9" rx="2" fill="var(--sand)" stroke="var(--ink)" strokeWidth="1.7" />
+        <rect x="-7" y="-23" width="14" height="4" rx="1.5" fill="var(--foam)" stroke="var(--ink)" strokeWidth="1.5" />
       </g>
     </g>
   )
@@ -314,14 +309,16 @@ export function IslandWideScene({ weather }: { weather: Weather }) {
       <g transform="translate(1110 210) scale(.7)"><path className="island-twinkle island-twinkle-two" d="M0 -8 2.2-2.2 8 0 2.2 2.2 0 8 -2.2 2.2 -8 0 -2.2-2.2Z" fill="var(--cream)" /></g>
       <g className="island-wide-cloud island-wide-cloud-one"><SmallCloud x={550} y={245} scale={1.7} /></g>
       <g className="island-wide-cloud island-wide-cloud-two"><SmallCloud x={1030} y={315} scale={1.2} /></g>
-      <rect y="420" width="1440" height="480" fill="var(--sea)" />
-      <path className="island-wave island-wave-back" d={landscapeWavePath(420, 11)} fill="var(--sky-deep)" opacity="0.58" />
-      <ellipse cx="720" cy="615" rx="660" ry="260" fill="var(--foam)" />
-      <ellipse cx="720" cy="590" rx="620" ry="235" fill="var(--sand)" />
-      <ellipse cx="720" cy="555" rx="545" ry="190" fill="var(--grass)" />
+      <rect data-sea="true" y="420" width="1440" height="480" fill="var(--sea)" />
+      <path data-sea="true" className="island-wave island-wave-back" d={landscapeWavePath(420, 11)} fill="var(--sky-deep)" opacity="0.58" />
+      <path data-sea="true" className="island-wave island-wave-front" d={landscapeWavePath(715, 13)} fill="var(--sea-deep)" opacity="0.42" />
+      <g transform="translate(110 347) scale(.43)"><PersonalIslandArt campus /></g>
+      <g transform="translate(1100 345) scale(.43)"><PersonalIslandArt campus={false} /></g>
+      <ellipse cx="720" cy="641" rx="647" ry="223" fill="var(--foam)" />
+      <ellipse cx="720" cy="620" rx="620" ry="224" fill="var(--sand)" />
+      <ellipse cx="720" cy="603" rx="565" ry="211" fill="var(--grass)" />
       <path d="M250 571 C390 485 500 650 652 567 C818 476 940 640 1190 545" fill="none" stroke="var(--sand)" strokeWidth="22" strokeLinecap="round" opacity="0.88" />
       <path d="M250 571 C390 485 500 650 652 567 C818 476 940 640 1190 545" fill="none" stroke="var(--cream)" strokeWidth="3" strokeDasharray="3 13" strokeLinecap="round" />
-      <path className="island-wave island-wave-front" d={landscapeWavePath(715, 13)} fill="var(--sea-deep)" opacity="0.42" />
       <g transform="translate(176 512) scale(4.5)"><Palm x={0} y={0} /></g>
       <House x={610} y={510} scale={2.05} />
 
@@ -334,8 +331,9 @@ export function IslandWideScene({ weather }: { weather: Weather }) {
       {wideLandmarks.map((landmark) => (
         <BuildingSpot key={landmark.id} x={landmark.x} y={landmark.y} place={landmark.id} scale={2} />
       ))}
-      <SharedIsland x={930} y={842} scale={1.7} />
-      <NeighborIsland x={1290} y={710} scale={2.2} />
+      <StarJar x={470} y={755} scale={1.65} />
+      <BuildingSpot place="snailPost" x={720} y={765} scale={2.5} />
+      <BuildingSpot place="bottle" x={970} y={755} scale={2.1} />
       <PaperBoat x={170} y={830} scale={2.2} />
     </svg>
   )
@@ -364,21 +362,24 @@ export function IslandScene({ weather }: { weather: Weather }) {
       <SkyKeepsakes />
       <g className="island-cloud island-cloud-a"><SmallCloud x={150} y={150} /></g>
       <g className="island-cloud island-cloud-b"><SmallCloud x={70} y={215} scale={0.8} /></g>
-      <rect y="300" width={SCENE_WIDTH} height={SCENE_HEIGHT - 300} fill="url(#island-phone-sea)" />
-      <path className="island-wave island-wave-back" d={wavePath(300, 6)} fill="var(--sky-deep)" opacity="0.55" />
+      <rect data-sea="true" y="240" width={SCENE_WIDTH} height={SCENE_HEIGHT - 240} fill="url(#island-phone-sea)" />
+      <path data-sea="true" className="island-wave island-wave-back" d={wavePath(240, 6)} fill="var(--sky-deep)" opacity="0.55" />
 
-      <ellipse cx="180" cy="385" rx="158" ry="72" fill="var(--foam)" opacity="0.8" />
-      <ellipse cx="180" cy="380" rx="150" ry="66" fill="var(--sand)" />
-      <ellipse cx="180" cy="362" rx="128" ry="50" fill="var(--grass)" />
+      <path data-sea="true" className="island-wave island-wave-front" d={wavePath(470, 7)} fill="var(--sea-deep)" opacity="0.45" />
+      <g transform="translate(12 207) scale(.21)"><PersonalIslandArt campus /></g>
+      <g transform="translate(259 208) scale(.21)"><PersonalIslandArt campus={false} /></g>
+      <ellipse cx="180" cy="424" rx="176" ry="122" fill="var(--foam)" opacity="0.8" />
+      <ellipse cx="180" cy="416" rx="169" ry="115" fill="var(--sand)" />
+      <ellipse cx="180" cy="406" rx="161" ry="109" fill="var(--grass)" />
       <path d="M72 363 C108 339 132 388 170 367 C208 345 236 376 287 355" fill="none" stroke="var(--sand)" strokeWidth="9" strokeLinecap="round" opacity="0.85" />
       <path d="M72 363 C108 339 132 388 170 367 C208 345 236 376 287 355" fill="none" stroke="var(--cream)" strokeWidth="1.5" strokeDasharray="2 7" strokeLinecap="round" />
       <Flower x={129} y={378} /><Flower x={232} y={373} tone="var(--accent)" /><Flower x={148} y={403} tone="var(--cream)" />
       <Palm x={40} y={330} />
-      <path className="island-wave island-wave-front" d={wavePath(470, 7)} fill="var(--sea-deep)" opacity="0.45" />
-      <NeighborIsland x={304} y={489} />
       <PaperBoat x={286} y={557} scale={1.2} />
       <House />
-      <SharedIsland x={146} y={487} />
+      <StarJar x={80} y={478} scale={0.92} />
+      <BuildingSpot place="snailPost" x={168} y={484} scale={1.24} />
+      <BuildingSpot place="bottle" x={254} y={478} />
       <FeelingsSign />
       <SulkCloud />
       {islandPlaces.filter((p) => p.id === 'garden' || p.id === 'lantern').map((place) => (

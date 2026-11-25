@@ -5,7 +5,7 @@ import '../auth/auth.css'
 export function BackToIsland() {
   const navigate = useNavigate()
   return (
-    <button className="auth-link-button" type="button" onClick={() => navigate('/')}>
+    <button className="auth-link-button" type="button" onClick={() => navigate('/between-islands')}>
       {copy.island.back}
     </button>
   )

@@ -1,3 +1,4 @@
+import { copy } from '../src/copy/copy'
 import { expect, test } from '@playwright/test'
 
 // The island at the smallest and largest phone sizes, signed in through the
@@ -12,6 +13,10 @@ for (const size of [
     await page.setViewportSize(size)
 
     await page.goto('/?e2e')
+    await expect(page.getByRole('link', { name: copy.sharedIsland })).toBeVisible()
+    await expect(page.locator('#loader')).toHaveCount(0)
+    await page.screenshot({ path: `test-results/home-${size.width}x${size.height}.png` })
+    await page.getByRole('link', { name: copy.sharedIsland }).click()
     await expect(page.getByRole('button', { name: "Mochi's house" })).toBeVisible({ timeout: 15_000 })
     await expect(page.locator('#loader')).toHaveCount(0, { timeout: 5_000 })
 
@@ -33,6 +38,13 @@ for (const size of [
     }
 
     await page.screenshot({ path: `test-results/island-${size.width}x${size.height}.png` })
+    for (const place of ['starJar', 'snailPost'] as const) {
+      await page.getByRole('button', { name: copy.places[place] }).click()
+      await expect(page).toHaveURL(url => url.pathname === '/place/' + place)
+      await page.goBack()
+    }
+    await page.getByRole('button', { name: copy.islandName(copy.island.khant) }).click()
+    await expect(page.getByRole('link', { name: copy.sharedIsland })).toBeVisible()
     expect(errors).toEqual([])
   })
 }

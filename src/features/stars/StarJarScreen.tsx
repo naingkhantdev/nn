@@ -5,6 +5,7 @@ import { useClock } from '../../core/clock'
 import { useServices } from '../../core/services'
 import { myanmarDayNumber } from '../../core/time'
 import { createShakeDetector, type ShakeDetector } from '../../platform/shake'
+import { StarJar } from '../island/IslandScene'
 import { BackToIsland } from '../island/BackToIsland'
 import { jarStateFor } from './jarState'
 import type { Star } from './star'
@@ -24,40 +25,6 @@ function useMyanmarDay(): number {
     return () => clearInterval(id)
   }, [clock])
   return day
-}
-
-function JarArt({ full }: { full: boolean }) {
-  return (
-    <svg viewBox="0 0 120 140" width="150" height="175" aria-hidden="true">
-      <ellipse cx="60" cy="132" rx="44" ry="6" fill="var(--shadow)" />
-      <rect x="34" y="6" width="52" height="16" rx="5" fill="var(--accent)" stroke="var(--ink)" strokeWidth="3" />
-      <path
-        d="M30 24 H90 Q104 24 104 40 V112 Q104 128 88 128 H32 Q16 128 16 112 V40 Q16 24 30 24 Z"
-        fill="var(--foam)"
-        stroke="var(--ink)"
-        strokeWidth="3.5"
-      />
-      {full &&
-        [
-          [40, 104],
-          [62, 112],
-          [82, 100],
-          [52, 86],
-          [74, 80],
-        ].map(([x, y], i) => (
-          <path
-            key={i}
-            transform={`translate(${x} ${y})`}
-            d="M0 -9 L2.6 -2.8 9 -2.8 3.8 1.2 5.8 8 0 4 -5.8 8 -3.8 1.2 -9 -2.8 -2.6 -2.8 Z"
-            fill="var(--sun)"
-            stroke="var(--ink)"
-            strokeWidth="1.2"
-            strokeLinejoin="round"
-          />
-        ))}
-      <path d="M28 40 Q26 70 30 100" fill="none" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" opacity="0.7" />
-    </svg>
-  )
 }
 
 export function StarJarScreen({ shake: shakeProp }: { shake?: ShakeDetector }) {
@@ -131,7 +98,10 @@ export function StarJarScreen({ shake: shakeProp }: { shake?: ShakeDetector }) {
         aria-disabled={jar?.kind !== 'ready'}
         onClick={() => void openJar()}
       >
-        <JarArt full={jar?.kind === 'ready'} />
+        <svg viewBox="-47 -42 94 84" width="184" height="164" aria-hidden="true">
+          <ellipse cy="1" rx="41" ry="39" fill="var(--sand)" fillOpacity=".46" />
+          <StarJar x={0} y={0} full={jar?.kind === 'ready'} />
+        </svg>
       </button>
 
       {opening && <p className="auth-intro">{copy.stars.opening}</p>}

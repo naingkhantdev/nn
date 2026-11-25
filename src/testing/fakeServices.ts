@@ -82,6 +82,7 @@ export function fakeIslandRepository(overrides: Partial<IslandRepository> = {}):
     lightLantern: async () => {},
     watchMyVisit: (cb) => { cb(null); return () => {} },
     watchOtherVisit: (cb) => { cb(null); return () => {} },
+    chooseIsland: async () => {},
     visitOtherIsland: async () => {},
     watchActiveSulks: (cb) => { cb([]); return () => {} },
     watchSulkHistory: (cb) => { cb([]); return () => {} },

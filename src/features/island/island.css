@@ -116,13 +116,13 @@
 }
 
 .island-place-mochiHouse { left: 48.61%; top: 51.56%; }
-.island-place-starJar { left: 22.22%; top: 75.31%; }
+.island-place-starJar { left: 22.22%; top: 74.69%; }
 .island-place-feelings { left: 24.44%; top: 54.69%; }
 .island-place-sulkCloud { left: 78.33%; top: 20%; }
 .island-place-garden { left: 35.56%; top: 64.06%; }
 .island-place-lantern { left: 63.33%; top: 64.69%; }
-.island-place-snailPost { left: 40.56%; top: 75.31%; }
-.island-place-bottle { left: 58.89%; top: 75.31%; }
+.island-place-snailPost { left: 46.67%; top: 75.63%; }
+.island-place-bottle { left: 70.56%; top: 74.69%; }
 
 .island-mochi {
   z-index: 3;
@@ -302,16 +302,16 @@
   .island-scene-wide { display: block; }
 
   .island-place-mochiHouse { left: 42.36%; top: 56.67%; }
-  .island-place-starJar { left: 56.79%; top: 92.61%; }
+  .island-place-starJar { left: 32.64%; top: 83.89%; }
   .island-place-feelings { left: 26.74%; top: 62.78%; }
   .island-place-sulkCloud { left: 81.25%; top: 18.89%; }
   .island-place-garden { left: 44.44%; top: 76.67%; }
   .island-place-lantern { left: 58.68%; top: 77.78%; }
-  .island-place-snailPost { left: 64.58%; top: 92.61%; }
-  .island-place-bottle { left: 72.38%; top: 92.61%; }
+  .island-place-snailPost { left: 50%; top: 85%; }
+  .island-place-bottle { left: 67.36%; top: 83.89%; }
 
   .island-mochi-you { left: 46.9% !important; top: 63% !important; }
-  .island-mochi-friend { left: 95% !important; top: 79.5% !important; }
+  .island-mochi-friend { left: 73% !important; top: 64% !important; }
   .island-mochi svg { width: 68px; height: 68px; }
   .island-visit-neighbor { left: 89.5%; top: 84%; width: 18%; }
   .island-visit-note,
@@ -376,8 +376,8 @@
   font-family: var(--font-display);
   color: var(--ink);
 }
-.campus-resident { left: 62%; }
-.campus-visitor { left: 37%; }
+.campus-resident { left: 62%; top: 65%; }
+.campus-visitor { left: 42%; top: 66%; }
 .campus-frame strong, .campus-frame small {
   background: var(--cream);
   padding-inline: 7px;
@@ -424,18 +424,6 @@
   100% { opacity: 0; }
 }
 
-.shared-island-name {
-  position: absolute;
-  top: 81%;
-  left: 40.56%;
-  transform: translateX(-50%);
-  color: var(--ink);
-  background: var(--cream);
-  padding: 1px 9px;
-  border-radius: var(--radius-sm);
-  font: 700 13px var(--font-display);
-  pointer-events: none;
-}
 .quick-notes { display: flex; flex-wrap: wrap; gap: 6px; }
 .quick-notes button {
   min-height: 44px;
@@ -447,35 +435,234 @@
   font: inherit;
   cursor: pointer;
 }
-@media (min-width: 700px) and (orientation: landscape) {
-  .shared-island-name { left: 64.58%; top: 96%; }
+.personal-island-title {
+  position: absolute;
+  top: 12%;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  color: var(--ink);
+  font: 700 clamp(22px, 5vw, 34px)/1.1 var(--font-display);
+}
+.jetty-link {
+  position: absolute;
+  top: 86%;
+  left: 8%;
+  display: inline-flex;
+  align-items: center;
+  gap: .6em;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--cream);
+  font: 700 15px var(--font-display);
+  text-decoration: none;
 }
 
-.island-dock {
+.far-island-link {
+  position: absolute;
+  left: 5%;
+  top: 30%;
+  width: 27%;
+  min-height: 44px;
+  display: grid;
+  align-items: center;
+  border-radius: 50%;
+}
+.far-island-link svg { width: 100%; }
+.far-island-link:focus-visible { outline: 3px dashed var(--accent-ink); }
+
+.shared-destination {
+  position: absolute;
+  z-index: 3;
+  top: 36%;
+  width: 28%;
+  height: 15%;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.shared-destination-khant { right: 1%; }
+.shared-destination-noe { left: 1%; }
+.shared-destination:focus-visible {
+  outline: 3px dashed var(--accent-ink);
+  outline-offset: 2px;
+}
+@media (min-width: 700px) and (orientation: landscape) {
+  .shared-destination { top: 31%; height: 26%; }
+  .shared-destination-khant { right: 2%; }
+  .shared-destination-noe { left: 2%; }
+}
+
+.visit-lantern-warning {
+  position: absolute;
+  z-index: 5;
+  top: 8%;
+  right: 8%;
+  width: 42px;
+  height: 52px;
+  animation: visit-lantern-float 2.4s ease-in-out infinite;
+}
+.visit-lantern-warning svg { display: block; width: 100%; height: 100%; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@keyframes visit-lantern-float {
+  50% { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .visit-lantern-warning { animation: none; }
+}
+
+.return-dock-link {
   position: absolute;
   z-index: 4;
-  bottom: 1%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-  width: max-content;
-  max-width: 98%;
+  left: 10%;
+  top: 72%;
+  width: 24%;
+  height: 16%;
+  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
 }
-.island-dock button {
-  min-height: 44px;
-  padding: 6px 14px;
-  border: 2px solid var(--ink);
-  border-radius: 16px;
-  background: var(--cream);
-  color: var(--ink);
-  font: 700 14px/1.15 var(--font-display);
-  cursor: pointer;
+.return-dock-link:focus-visible {
+  outline: 3px dashed var(--accent-ink);
+  outline-offset: 2px;
 }
 
-@media (min-width: 700px) and (orientation: landscape) {
-  .island-dock { left: 2%; bottom: 3%; transform: none; }
+.noe-mochi-bow {
+  position: absolute;
+  z-index: 2;
+  top: 8%;
+  right: 13%;
+  width: 14px;
+  height: 12px;
+  overflow: visible;
 }
-@media (max-width: 699px), (orientation: portrait) {
-  .island-dock { left: 3%; bottom: 2%; transform: none; flex-direction: column; }
+.campus-noe-bow {
+  position: absolute;
+  z-index: 2;
+  width: 28px;
+  height: 22px;
+  top: 1px;
+  right: 7px;
+  overflow: visible;
+}
+
+.mochi-play {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: 50%;
+}
+.mochi-play:focus-visible { outline: 3px dashed var(--accent-ink); outline-offset: 3px; }
+.mochi-play-sparks { position: absolute; inset: -20%; width: 140%; height: 140%; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .mochi-play-active > .mochi { animation: mochi-play-bounce 550ms ease-in-out 2; }
+  .mochi-play-sparks { animation: mochi-play-spark 1100ms ease-out both; }
+}
+@keyframes mochi-play-bounce {
+  30% { transform: translateY(-8px) rotate(-7deg); }
+  65% { transform: translateY(-3px) rotate(7deg) scale(1.06, .94); }
+}
+@keyframes mochi-play-spark {
+  from { opacity: 0; transform: scale(.7); }
+  30% { opacity: 1; }
+  to { opacity: 0; transform: translateY(-12px) scale(1.15); }
+}
+.island-paused .mochi-play *, .island-paused .mochi-play { animation-play-state: paused !important; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .island-birds { animation: island-birds-drift 12s ease-in-out infinite alternate; }
+  .island-horizon-wave { animation: island-water-drift 7s ease-in-out infinite alternate; }
+  .island-sun-reflection { animation: island-reflection 5s ease-in-out infinite alternate; }
+}
+@keyframes island-birds-drift { to { transform: translate(20px, -8px); } }
+@keyframes island-water-drift { to { transform: translateX(14px); } }
+@keyframes island-reflection { to { opacity: .25; transform: translateY(2px); } }
+.island-paused .island-birds,
+.island-paused .island-horizon-wave,
+.island-paused .island-sun-reflection { animation-play-state: paused; }
+
+.water-play {
+  position: absolute;
+  z-index: 2;
+  right: 3%;
+  bottom: 1%;
+  width: 48%;
+  height: 18%;
+  min-height: 44px;
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.water-play svg { width: 100%; height: 100%; overflow: visible; }
+.water-play:focus-visible { outline: 3px dashed var(--accent-ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .water-jumping-fish { transform-origin: 100px 75px; animation: fish-jump 1s ease-in-out both; }
+  .fish-ripple { transform-origin: 100px 76px; animation: fish-ripple 1.2s ease-out both; }
+  .fish-droplets { animation: fish-spray 1s ease-out both; }
+}
+@keyframes fish-jump {
+  0%, 100% { opacity: 0; transform: translateY(12px) rotate(15deg); }
+  20% { opacity: 1; }
+  50% { transform: translateY(-30px) rotate(-20deg); }
+  80% { opacity: 1; }
+}
+@keyframes fish-ripple {
+  from { opacity: .9; transform: scale(.5); }
+  to { opacity: 0; transform: scale(2); }
+}
+@keyframes fish-spray {
+  from { opacity: 0; }
+  45% { opacity: 1; transform: translateY(-10px); }
+  to { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .water-jumping-fish, .fish-ripple, .fish-droplets { animation: water-fade 1s both; }
+}
+@keyframes water-fade { to { opacity: 0; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .visit-ferry > svg:last-child { display: block; position: relative; top: auto; left: auto; }
+  .campus-by-sea .campus-resident,
+  .campus-by-sea .campus-visitor { animation: island-arrival-reveal 2s both; }
+}
+@keyframes island-arrival-reveal {
+  0%, 88% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .campus-by-sea .campus-resident,
+  .campus-by-sea .campus-visitor { animation-delay: 0s; }
+}
+
+.water-play-anywhere { pointer-events: none; }
+.water-play-anywhere:focus-visible { pointer-events: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .visit-ferry { animation-duration: 2.4s; }
+  .visit-crossing { animation-duration: 2.4s; }
+  .campus-by-sea .campus-resident,
+  .campus-by-sea .campus-visitor { animation-duration: 2.7s; }
 }

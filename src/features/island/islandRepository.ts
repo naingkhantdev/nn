@@ -51,7 +51,8 @@ export interface IslandSulk {
 }
 export interface SulkComfort { id: string; kind: 'hug' | 'note' | 'drops'; text: string; createdAt: Date | null }
 export interface LanternState { day: number; litBy: string[] }
-export interface IslandVisit { visitedAt: Date | null }
+export type IslandDestination = 'noe' | 'khant' | 'shared'
+export interface IslandVisit { visitedAt: Date | null; destination?: IslandDestination }
 
 export interface IslandRepository {
   isNoe(): boolean
@@ -65,6 +66,7 @@ export interface IslandRepository {
   lightLantern(): Promise<void>
   watchMyVisit(cb: (visit: IslandVisit | null) => void): () => void
   watchOtherVisit(cb: (visit: IslandVisit | null) => void): () => void
+  chooseIsland(destination: IslandDestination): Promise<void>
   visitOtherIsland(): Promise<void>
   watchActiveSulks(cb: (items: IslandSulk[]) => void): () => void
   watchSulkHistory(cb: (items: IslandSulk[]) => void): () => void
@@ -199,7 +201,7 @@ export function createIslandRepository({ db, auth, now = Date.now, isOnline = ()
       const uid = auth.currentUser?.uid
       if (!uid) return () => {}
       return onSnapshot(doc(db, 'islandVisits', uid), (snap) => {
-        cb(snap.exists() ? { visitedAt: dateOf(snap.data().visitedAt) } : null)
+        cb(snap.exists() ? { visitedAt: dateOf(snap.data().visitedAt), destination: snap.data().destination } : null)
       }, () => cb(null))
     },
 
@@ -211,10 +213,14 @@ export function createIslandRepository({ db, auth, now = Date.now, isOnline = ()
       void other(uid).then((otherUid) => {
         if (stopped) return
         off = onSnapshot(doc(db, 'islandVisits', otherUid), (snap) => {
-          cb(snap.exists() ? { visitedAt: dateOf(snap.data().visitedAt) } : null)
+          cb(snap.exists() ? { visitedAt: dateOf(snap.data().visitedAt), destination: snap.data().destination } : null)
         }, () => cb(null))
       }).catch(() => { if (!stopped) cb(null) })
       return () => { stopped = true; off() }
+    },
+
+    async chooseIsland(destination) {
+      await setDoc(doc(db, 'islandVisits', me()), { destination, visitedAt: serverTimestamp() })
     },
 
     async visitOtherIsland() {

@@ -1,4 +1,4 @@
-import { SnailPost } from './IslandScene'
+import { MessageBottle, SnailPost } from './IslandScene'
 import { QuickNotes } from '../QuickNotes'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { copy } from '../../copy/copy'
@@ -65,10 +65,10 @@ export function SnailPostScreen() {
   return <main className="auth-screen island-feature snail-station">
     <svg aria-hidden="true" viewBox="-30 -42 60 62" width="110" height="106"><SnailPost x={0} y={0} /></svg>
     <h1 className="auth-title">{copy.placesUi.snailTitle}</h1>
-    <p className="auth-intro">{copy.placesUi.snailIntro}</p>
+
     <form className="auth-card island-feature-form" onSubmit={submit}>
-      {!text && <QuickNotes choose={setText} />}
       <label className="auth-field">{copy.placesUi.letterLabel}<textarea className="island-feature-text" value={text} maxLength={1000} onChange={(e) => setText(e.target.value)} /></label>
+      {!text && <details><summary>{copy.placesUi.quickNotesTitle}</summary><QuickNotes choose={setText} /></details>}
       {error && <p className="auth-message" role="alert">{error}</p>}
       <button className="auth-button" type="submit" disabled={busy || !text.trim()}>{busy ? copy.placesUi.sending : copy.placesUi.sendSnail}</button>
     </form>
@@ -95,18 +95,24 @@ export function MessageBottleScreen() {
     catch (err) { setError(err instanceof Error ? err.message : copy.placesUi.sendFailed) }
     finally { setBusy(false) }
   }
-  return <FeaturePage title={copy.placesUi.bottleTitle}>
+  return <main className="auth-screen island-feature bottle-shore">
+    <svg viewBox="-65 -37 130 77" width="190" height="112" aria-hidden="true">
+      <path d="M-62 8 Q-38 2 -17 8 T26 8 T61 8 Q62 31 37 33 Q0 40 -37 33 Q-61 28 -62 8Z" fill="var(--foam)" />
+      <MessageBottle x={0} y={0} />
+    </svg>
+    <h1 className="auth-title">{copy.placesUi.bottleTitle}</h1>
     <p className="auth-intro">{copy.placesUi.bottleIntro}</p>
     <form className="auth-card island-feature-form" onSubmit={submit}>
-      {!text && <QuickNotes choose={setText} />}
       <label className="auth-field">{copy.placesUi.letterLabel}<textarea className="island-feature-text" value={text} maxLength={1000} onChange={(e) => setText(e.target.value)} /></label>
+      {!text && <details><summary>{copy.placesUi.quickNotesTitle}</summary><QuickNotes choose={setText} /></details>}
       <label className="auth-field">{copy.placesUi.openDate}<input type="date" min={dateInputValue(new Date(Date.now() + 86_400_000))} value={date} onChange={(e) => setDate(e.target.value)} /></label>
       {error && <p className="auth-message" role="alert">{error}</p>}
       <button className="auth-button" type="submit" disabled={busy || !text.trim() || !date}>{busy ? copy.placesUi.sending : copy.placesUi.sealBottle}</button>
     </form>
     <section className="island-feature-section"><h2>{copy.placesUi.bottlesForYou}</h2><LetterList items={received} empty={copy.placesUi.noBottles} /></section>
     <details className="island-feature-details"><summary>{copy.placesUi.bottlesSent}</summary><LetterList items={sent} empty={copy.placesUi.noSentBottles} /></details>
-  </FeaturePage>
+    <BackToIsland />
+  </main>
 }
 
 export function GardenScreen() {

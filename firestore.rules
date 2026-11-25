@@ -118,7 +118,8 @@ service cloud.firestore {
     match /islandVisits/{uid} {
       allow read: if isMember();
       allow create, update: if isSelf(uid)
-        && onlyKeys(['visitedAt'])
+        && onlyKeys(['visitedAt', 'destination'])
+        && (!('destination' in request.resource.data) || request.resource.data.destination in ['noe', 'khant', 'shared'])
         && request.resource.data.visitedAt == request.time;
       allow delete: if isSelf(uid);
     }
