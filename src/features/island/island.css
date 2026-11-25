@@ -450,3 +450,32 @@
 @media (min-width: 700px) and (orientation: landscape) {
   .shared-island-name { left: 64.58%; top: 96%; }
 }
+
+.island-dock {
+  position: absolute;
+  z-index: 4;
+  bottom: 1%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  width: max-content;
+  max-width: 98%;
+}
+.island-dock button {
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  background: var(--cream);
+  color: var(--ink);
+  font: 700 14px/1.15 var(--font-display);
+  cursor: pointer;
+}
+
+@media (min-width: 700px) and (orientation: landscape) {
+  .island-dock { left: 2%; bottom: 3%; transform: none; }
+}
+@media (max-width: 699px), (orientation: portrait) {
+  .island-dock { left: 3%; bottom: 2%; transform: none; flex-direction: column; }
+}

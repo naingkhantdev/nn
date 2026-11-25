@@ -157,14 +157,16 @@ function LanternSpot({ x, y, scale = 1 }: { x: number; y: number; scale?: number
   )
 }
 
-function SnailPost({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+export function SnailPost({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
   return (
     <g transform={'translate(' + x + ' ' + y + ') scale(' + scale + ')'}>
       <ellipse cy="12" rx="22" ry="6" fill="var(--grass-deep)" opacity="0.35" />
-      <path d="M0 11 V-19" stroke="var(--sand)" strokeWidth="4" />
-      <path d="M-18 -20 Q-18 -25 -12 -25 H12 Q18 -25 18 -20 V-3 H-18 Z" fill="var(--accent)" stroke="var(--ink)" strokeWidth="2.5" />
-      <path d="M-12 -14 H12 M-12 -9 H7" stroke="var(--mochi)" strokeWidth="2" strokeLinecap="round" />
-      <path d="M15 -22 V-32 L26 -27 V-19" fill="none" stroke="var(--ink)" strokeWidth="2.5" strokeLinejoin="round" />
+      <g stroke="var(--ink)" strokeWidth="2" strokeLinejoin="round">
+        <path d="M-20 9 V-10 A20 20 0 0 1 20 -10 V9Z" fill="var(--cream)" />
+        <path d="M-23 -9 C-26 -36 7 -44 18 -25 Q28 -10 14 -5 C2 0 -9 -8 -7 -18 C-4 -27 8 -26 9 -19 Q10 -12 3 -14" fill="var(--accent)" />
+        <rect x="1" y="-4" width="14" height="10" rx="1" fill="var(--mochi)" />
+        <path d="m2 -3 6 5 6 -5" fill="none" />
+      </g>
       <g className="island-mail-snail">
       <path d="M-10 8 Q-10 2 -4 2 H3 Q9 2 9 8 Z" fill="var(--sand)" stroke="var(--ink)" strokeWidth="1.5" />
       <circle cx="-4" cy="0" r="5" fill="var(--mochi)" stroke="var(--ink)" strokeWidth="1.5" />

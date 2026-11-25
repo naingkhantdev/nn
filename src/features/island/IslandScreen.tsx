@@ -144,14 +144,12 @@ export function IslandScreen({ features }: { features: Features }) {
             }
           />
         ))}
-        <button
-          type="button"
-          className="island-visit-neighbor"
-          aria-label={island.isNoe() ? copy.island.sailStudio : copy.island.sailCampus}
-          onClick={() => navigate('/visit', { state: { sailing: true } })}
-        >
-          {island.isNoe() ? copy.island.sailStudio : copy.island.sailCampus}
-        </button>
+        <nav className="island-dock" aria-label={copy.sharedIsland}>
+          <button type="button" onClick={() => navigate('/my-island')}>{copy.myIsland}</button>
+          <button type="button" onClick={() => navigate('/visit', { state: { sailing: true } })}>
+            {copy.visitIsland(island.isNoe() ? copy.island.khant : copy.island.noe)}
+          </button>
+        </nav>
         {myVisit?.visitedAt && (
           <p className="island-my-visit-note" aria-live="polite">
             {copy.island.myLastVisit(formatVisitAge(myVisit.visitedAt, now))}

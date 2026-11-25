@@ -87,3 +87,13 @@
 }
 .island-delete-button { background: var(--accent-ink); }
 .island-settings-page { width: min(100%, 520px); min-height: 100dvh; align-content: center; }
+
+.snail-station .island-feature-form {
+  border-top: 7px solid transparent;
+  border-image: repeating-linear-gradient(120deg, var(--accent) 0 12px, var(--cream) 12px 22px, var(--sea-deep) 22px 34px, var(--cream) 34px 44px) 8;
+  background: var(--cream);
+}
+.snail-station textarea {
+  line-height: 1.8;
+  background: repeating-linear-gradient(to bottom, var(--cream) 0 calc(1.8em - 1px), var(--sand) calc(1.8em - 1px) 1.8em);
+}

@@ -20,7 +20,7 @@ import { formatVisitAge } from './visitTime'
 
 import './island.css'
 
-export function FriendIslandScreen() {
+export function FriendIslandScreen({ own = false }: { own?: boolean }) {
   const { feelings, island } = useServices()
   const now = useClock()()
   const [feeling, setFeeling] = useState<FeelingDoc | null>(null)
@@ -28,20 +28,20 @@ export function FriendIslandScreen() {
   const [visit, setVisit] = useState<{ visitedAt: Date | null } | null>(null)
   const [visitFailed, setVisitFailed] = useState(false)
   const recorded = useRef(false)
-  const campus = !island.isNoe()
+  const campus = own ? island.isNoe() : !island.isNoe()
   const host = campus ? copy.island.noe : copy.island.khant
   const visitor = campus ? copy.island.khant : copy.island.noe
   const visible = usePageVisible()
   const sailing = useLocation().state?.sailing === true
 
-  useEffect(() => feelings.watchOther(setFeeling), [feelings])
-  useEffect(() => feelings.watchOtherActivity(setActivity), [feelings])
-  useEffect(() => island.watchMyVisit(setVisit), [island])
+  useEffect(() => own ? feelings.watchMine(setFeeling) : feelings.watchOther(setFeeling), [feelings, own])
+  useEffect(() => own ? feelings.watchMyActivity(setActivity) : feelings.watchOtherActivity(setActivity), [feelings, own])
+  useEffect(() => own ? undefined : island.watchMyVisit(setVisit), [island, own])
   useEffect(() => {
-    if (recorded.current) return
+    if (own || !sailing || recorded.current) return
     recorded.current = true
     void island.visitOtherIsland().catch(() => setVisitFailed(true))
-  }, [island])
+  }, [island, own, sailing])
   useMinuteTick()
 
   const currentActivity = activeActivity(activity, now)
@@ -59,7 +59,7 @@ export function FriendIslandScreen() {
         <section className="visit-island-card" aria-labelledby="visit-island-title">
           <h1 id="visit-island-title">{campus ? copy.island.campus : copy.island.studio}</h1>
 
-          {visit?.visitedAt && (
+          {!own && visit?.visitedAt && (
             <p>{copy.island.myLastVisit(formatVisitAge(visit.visitedAt, now))}</p>
           )}
           {visitFailed && <p role="status">{copy.island.visitOffline}</p>}
@@ -74,10 +74,10 @@ export function FriendIslandScreen() {
           <strong>{host}</strong>
           {currentActivity && <small>{copy.activities.label[currentActivity]}</small>}
         </div>
-        <div className="campus-visitor">
+        {!own && <div className="campus-visitor">
           <Mochi expression="happy" size={60} label={visitor} />
           <strong>{visitor}</strong>
-        </div>
+        </div>}
       </div>
       {sailing && <div className="visit-crossing" aria-hidden="true">
         <div className="visit-ferry">

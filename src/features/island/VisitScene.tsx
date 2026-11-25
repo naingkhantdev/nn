@@ -21,6 +21,13 @@ export function VisitScene({ campus }: { campus: boolean }) {
           <rect x="177" y="218" width="49" height="36" rx="4" fill="var(--ink)" />
           <path d="m193 228 -7 7 7 6 m15 -13 7 7 -7 6" stroke="var(--leaf)" fill="none" />
         </g>}
+        {campus && [[52,283], [68,291], [85,280], [307,282], [324,278], [341,291]].map(([x,y]) => (
+          <g key={x} transform={`translate(${x} ${y})`}>
+            <path d="M0 3 V15 Q-8 14 -9 8 Q-3 7 0 12" fill="var(--leaf)" stroke="var(--grass-deep)" strokeWidth="2" />
+            <path d="M0 0 C-10 -9 -12 5 -4 5 C-5 14 6 12 5 5 C15 4 9 -8 3 -3 C4 -11 -4 -11 0 0Z" fill="var(--accent)" strokeWidth="1.4" />
+            <circle r="2" fill="var(--sun)" stroke="none" />
+          </g>
+        ))}
         <path d="m135 331 -47 65 22 7 54 -66Z" fill="var(--sand)" />
         <path d="m120 354 25 7 m-36 9 24 7 m-35 8 24 7" fill="none" />
         <g className="campus-boat">

@@ -71,7 +71,9 @@ export const copy = {
   },
 
   quickNotes: ['Thinking of you', 'Have a good day', 'You made me smile'],
-  sharedIsland: 'Our island',
+  sharedIsland: 'Between Islands',
+  myIsland: 'My island',
+  visitIsland: (name: string) => `Visit ${name}’s island`,
 
   // Island home.
   island: {

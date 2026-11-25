@@ -1,3 +1,4 @@
+import { SnailPost } from './IslandScene'
 import { QuickNotes } from '../QuickNotes'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { copy } from '../../copy/copy'
@@ -61,7 +62,9 @@ export function SnailPostScreen() {
     catch (err) { setError(err instanceof Error ? err.message : copy.placesUi.sendFailed) }
     finally { setBusy(false) }
   }
-  return <FeaturePage title={copy.placesUi.snailTitle}>
+  return <main className="auth-screen island-feature snail-station">
+    <svg aria-hidden="true" viewBox="-30 -42 60 62" width="110" height="106"><SnailPost x={0} y={0} /></svg>
+    <h1 className="auth-title">{copy.placesUi.snailTitle}</h1>
     <p className="auth-intro">{copy.placesUi.snailIntro}</p>
     <form className="auth-card island-feature-form" onSubmit={submit}>
       {!text && <QuickNotes choose={setText} />}
@@ -71,7 +74,8 @@ export function SnailPostScreen() {
     </form>
     <section className="island-feature-section"><h2>{copy.placesUi.incoming}</h2><LetterList items={received} empty={copy.placesUi.noLetters} /></section>
     <details className="island-feature-details"><summary>{copy.placesUi.sentLetters}</summary><LetterList items={sent} empty={copy.placesUi.noSentLetters} /></details>
-  </FeaturePage>
+    <BackToIsland />
+  </main>
 }
 
 export function MessageBottleScreen() {

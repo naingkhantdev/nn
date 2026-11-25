@@ -59,7 +59,7 @@ describe('IslandScreen', () => {
 
   it("opens the friend's island when its button is tapped", async () => {
     renderIsland()
-    await userEvent.click(screen.getByRole('button', { name: copy.island.sailCampus }))
+    await userEvent.click(screen.getByRole('button', { name: copy.visitIsland(copy.island.noe) }))
     expect(screen.getByTestId('where')).toHaveTextContent('/visit')
   })
 
