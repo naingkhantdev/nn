@@ -312,8 +312,8 @@ export function IslandWideScene({ weather }: { weather: Weather }) {
       <rect data-sea="true" y="420" width="1440" height="480" fill="var(--sea)" />
       <path data-sea="true" className="island-wave island-wave-back" d={landscapeWavePath(420, 11)} fill="var(--sky-deep)" opacity="0.58" />
       <path data-sea="true" className="island-wave island-wave-front" d={landscapeWavePath(715, 13)} fill="var(--sea-deep)" opacity="0.42" />
-      <g transform="translate(110 347) scale(.43)"><PersonalIslandArt campus /></g>
-      <g transform="translate(1100 345) scale(.43)"><PersonalIslandArt campus={false} /></g>
+      <g transform="translate(110 240) scale(.43)"><PersonalIslandArt campus /></g>
+      <g transform="translate(1100 240) scale(.43)"><PersonalIslandArt campus={false} /></g>
       <ellipse cx="720" cy="641" rx="647" ry="223" fill="var(--foam)" />
       <ellipse cx="720" cy="620" rx="620" ry="224" fill="var(--sand)" />
       <ellipse cx="720" cy="603" rx="565" ry="211" fill="var(--grass)" />

@@ -95,6 +95,7 @@ export const copy = {
     visitFriendIsland: "Visit friend's island",
     friendIslandTitle: "Friend's island",
     visitingFriendIsland: "You're visiting your friend's island.",
+    visitHistory: 'Island visits',
     myLastVisit: (time: string) => `You visited your friend's island ${time}.`,
     friendLastVisit: (time: string) => `Your island was visited ${time}.`,
     visitNow: 'Just now',

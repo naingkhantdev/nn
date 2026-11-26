@@ -96,10 +96,19 @@ export function IslandScreen({ features }: { features: Features }) {
         <WaterPlay />
 
 
-        {friendVisit?.visitedAt && (
-          <p className="island-visit-note" aria-live="polite">
-            {copy.island.friendLastVisit(formatVisitAge(friendVisit.visitedAt, now))}
-          </p>
+        {(friendVisit?.visitedAt || myVisit?.visitedAt) && (
+          <details className="island-visit-history">
+            <summary aria-label={copy.island.visitHistory} title={copy.island.visitHistory}>
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 10a9 9 0 1 1 1.5 7M3 5v5h5" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+            </summary>
+            <div className="island-visit-history-content">
+              {friendVisit?.visitedAt && <p>{copy.island.friendLastVisit(formatVisitAge(friendVisit.visitedAt, now))}</p>}
+              {myVisit?.visitedAt && <p>{copy.island.myLastVisit(formatVisitAge(myVisit.visitedAt, now))}</p>}
+            </div>
+          </details>
         )}
         <div
           className="island-mochi island-mochi-you"
@@ -163,11 +172,6 @@ export function IslandScreen({ features }: { features: Features }) {
             }
           />
         ))}
-        {myVisit?.visitedAt && (
-          <p className="island-my-visit-note" aria-live="polite">
-            {copy.island.myLastVisit(formatVisitAge(myVisit.visitedAt, now))}
-          </p>
-        )}
       </div>
 
 
