@@ -381,11 +381,38 @@
 
 .campus-frame {
   position: absolute;
+  isolation: isolate;
+  container-type: inline-size;
   inset: 0;
   margin: auto;
   width: min(100%, 80dvh);
   aspect-ratio: 4 / 5;
   height: fit-content;
+}
+.campus-frame::before,
+.campus-frame::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  pointer-events: none;
+}
+.campus-frame::before {
+  inset-block: 0;
+  background: linear-gradient(var(--sky) 30.6%, var(--sky-deep) 30.6%, var(--sea) 55%, var(--sea-deep));
+}
+.campus-frame::after {
+  top: 100%;
+  height: 100vh;
+  background: var(--sea-deep);
+}
+.home-open-sea {
+  position: absolute;
+  top: 100%;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  height: 100vh;
 }
 .campus-scene { display: block; width: 100%; }
 .campus-frame .visit-island-card { top: 1%; }
@@ -398,52 +425,29 @@
   font-family: var(--font-display);
   color: var(--ink);
 }
-.campus-resident { left: 62%; top: 65%; }
-.campus-visitor { left: 42%; top: 66%; }
+.campus-resident {
+  left: 62%; top: 65%;
+  --arrival-x: -48.25cqw;
+  --arrival-y: 19cqw;
+  --jetty-x: -35.25cqw;
+  --jetty-y: 12.5cqw;
+  --shore-x: -25.75cqw;
+  --shore-y: 0cqw;
+}
+.campus-visitor {
+  left: 42%; top: 66%;
+  --arrival-x: -28.25cqw;
+  --arrival-y: 18.25cqw;
+  --jetty-x: -15.25cqw;
+  --jetty-y: 11.25cqw;
+  --shore-x: -5.75cqw;
+  --shore-y: -1.25cqw;
+}
+.campus-arriving { z-index: 3; }
 .campus-frame strong, .campus-frame small {
   background: var(--cream);
   padding-inline: 7px;
   border-radius: var(--radius-sm);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .campus-boat { animation: campus-dock 1s ease-out both; }
-  .campus-visitor { animation: campus-arrive .65s .75s ease-out both; }
-}
-@keyframes campus-dock { from { transform: translate(-120px, 35px); } }
-@keyframes campus-arrive {
-  from { opacity: 0; transform: translate(-95%, 30%); }
-}
-
-.visit-crossing { display: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .visit-crossing {
-    display: block;
-    position: absolute;
-    z-index: 6;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(var(--sky) 50%, var(--foam) 50%, var(--sea) 51%, var(--sea-deep));
-    animation: crossing-reveal 1.8s forwards;
-  }
-  .visit-ferry {
-    position: absolute;
-    top: 54%;
-    left: 0;
-    animation: crossing-sail 1.8s ease-in-out both;
-  }
-  .visit-ferry > :first-child { position: absolute; top: 11px; left: 10px; }
-  .visit-ferry > svg:last-child { position: relative; }
-  .campus-by-sea .campus-boat { animation-delay: 1.4s; }
-  .campus-by-sea .campus-visitor { animation-delay: 2.1s; }
-}
-@keyframes crossing-sail {
-  0% { transform: translate(-95%, 12px) rotate(-5deg); }
-  50% { transform: translate(40vw, -4px) rotate(3deg); }
-  100% { transform: translate(85vw, 6px) rotate(-2deg); }
-}
-@keyframes crossing-reveal {
-  0%, 75% { opacity: 1; }
-  100% { opacity: 0; }
 }
 
 .quick-notes { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -482,19 +486,6 @@
   font: 700 15px var(--font-display);
   text-decoration: none;
 }
-
-.far-island-link {
-  position: absolute;
-  left: 5%;
-  top: 24%;
-  width: 27%;
-  min-height: 44px;
-  display: grid;
-  align-items: center;
-  border-radius: 50%;
-}
-.far-island-link svg { width: 100%; }
-.far-island-link:focus-visible { outline: 3px dashed var(--accent-ink); }
 
 .shared-destination {
   position: absolute;
@@ -549,20 +540,94 @@
   .visit-lantern-warning { animation: none; }
 }
 
-.return-dock-link {
+.far-island-link {
   position: absolute;
   z-index: 4;
-  left: 10%;
-  top: 72%;
-  width: 24%;
-  height: 16%;
+  left: 1%;
+  top: 22%;
+  width: 23%;
+  height: 12%;
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
   border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
 }
-.return-dock-link:focus-visible {
+.far-island-link svg { width: 100%; }
+.home-docked-boat {
+  position: absolute;
+  z-index: 4;
+  left: 4%;
+  top: 74%;
+  width: 24.5cqw;
+  pointer-events: none;
+}
+.home-docked-boat svg { display: block; width: 100%; overflow: visible; }
+.far-island-link:focus-visible {
   outline: 3px dashed var(--accent-ink);
   outline-offset: 2px;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sea-swell { animation: sea-swell-flow 8s linear infinite; }
+  .sea-swell:nth-child(even) { animation-direction: reverse; }
+  .home-shore-surf {
+    transform-origin: 200px 320px;
+    animation: home-shore-wash 4.5s ease-in-out infinite;
+  }
+  .home-boat-rock {
+    transform-origin: 70px 96px;
+    animation: home-boat-sway 3.5s ease-in-out infinite;
+  }
+  .water-idle-ripples { animation: home-current-drift 5s ease-in-out infinite alternate; }
+  .campus-by-sea .home-docked-boat { animation: home-boat-dock 6s both; }
+  .campus-arriving { animation: home-disembark 6s linear both; }
+  .campus-arriving small { animation: home-arrival-label 6s both; }
+}
+@keyframes sea-swell-flow {
+  0% { transform: translate(-8px, -2px); opacity: .15; }
+  35%, 65% { opacity: .85; }
+  100% { transform: translate(12px, 3px); opacity: .15; }
+}
+@keyframes home-boat-dock {
+  0% { transform: translate(-55cqw, 15cqw); }
+  30%, 100% { transform: translate(0, 0); }
+}
+@keyframes home-disembark {
+  0% { transform: translate(calc(-50% + var(--arrival-x) - 55cqw), calc(-50% + var(--arrival-y) + 15cqw)) scale(.65); }
+  30%, 36% { transform: translate(calc(-50% + var(--arrival-x)), calc(-50% + var(--arrival-y))) scale(.65); }
+  46% { transform: translate(calc(-50% + var(--jetty-x)), calc(-50% + var(--jetty-y))) scale(.75); }
+  52% { transform: translate(calc(-50% + var(--jetty-x) + 3cqw), calc(-50% + var(--jetty-y) - 5cqw)) scale(.8); }
+  58% { transform: translate(calc(-50% + var(--jetty-x) + 6cqw), calc(-50% + var(--jetty-y) - 8cqw)) scale(.85); }
+  68% { transform: translate(calc(-50% + var(--shore-x)), calc(-50% + var(--shore-y))) scale(.9); }
+  80% { transform: translate(calc(-50% + var(--shore-x) * .6), calc(-50% - 1cqw)) rotate(-3deg); }
+  90% { transform: translate(calc(-50% + var(--shore-x) * .3), -50%) rotate(3deg); }
+  100% { transform: translate(-50%, -50%); }
+}
+@keyframes home-arrival-label {
+  0%, 90% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes home-current-drift {
+  from { transform: translate(-8px, 2px); opacity: .55; }
+  to { transform: translate(10px, -3px); opacity: 1; }
+}
+@keyframes home-shore-wash {
+  0%, 100% { transform: scale(1); opacity: .3; }
+  50% { transform: scale(1.035, 1.08); opacity: .8; }
+}
+@keyframes home-boat-sway {
+  0%, 100% { transform: translateY(1px) rotate(-2deg); }
+  50% { transform: translateY(-2px) rotate(2deg); }
+}
+.island-paused .sea-swell,
+.island-paused .home-shore-surf,
+.island-paused .home-boat-rock,
+.island-paused .home-docked-boat,
+.island-paused .campus-arriving,
+.island-paused .campus-arriving small,
+.island-paused .water-idle-ripples { animation-play-state: paused; }
 
 .noe-mochi-bow {
   position: absolute;
@@ -667,25 +732,5 @@
 }
 @keyframes water-fade { to { opacity: 0; } }
 
-@media (prefers-reduced-motion: no-preference) {
-  .visit-ferry > svg:last-child { display: block; position: relative; top: auto; left: auto; }
-  .campus-by-sea .campus-resident,
-  .campus-by-sea .campus-visitor { animation: island-arrival-reveal 2s both; }
-}
-@keyframes island-arrival-reveal {
-  0%, 88% { opacity: 0; }
-  100% { opacity: 1; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .campus-by-sea .campus-resident,
-  .campus-by-sea .campus-visitor { animation-delay: 0s; }
-}
-
 .water-play-anywhere { pointer-events: none; }
 .water-play-anywhere:focus-visible { pointer-events: auto; }
-@media (prefers-reduced-motion: no-preference) {
-  .visit-ferry { animation-duration: 2.4s; }
-  .visit-crossing { animation-duration: 2.4s; }
-  .campus-by-sea .campus-resident,
-  .campus-by-sea .campus-visitor { animation-duration: 2.7s; }
-}

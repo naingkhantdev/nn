@@ -1,4 +1,5 @@
 import { PersonalIslandArt } from './VisitScene'
+import { SeaSurface } from './SeaSurface'
 import { SCENE_HEIGHT, SCENE_WIDTH, islandPlaces, type IslandPlaceId } from './places'
 import { WeatherLayer } from './WeatherLayer'
 import type { Weather } from './weather'
@@ -195,7 +196,7 @@ function BuildingSpot({ x, y, place, scale = 1 }: { x: number; y: number; place:
 function SkyKeepsakes() {
   return (
     <>
-      <g transform="translate(288 226)">
+      <g transform="translate(200 48)">
         <g className="island-kite">
           <path d="M0 -17 14 0 0 18 -14 0 Z" fill="var(--accent)" stroke="var(--ink)" strokeWidth="2" />
           <path d="M0 -15 V16 M-12 0 H12" fill="none" stroke="var(--cream)" strokeWidth="1.5" />
@@ -297,7 +298,7 @@ export function IslandWideScene({ weather }: { weather: Weather }) {
       </defs>
       <rect width="1440" height="900" fill="url(#island-wide-sky)" />
       {wideWeather(weather)}
-      <g transform="translate(1280 265) scale(2.2)">
+      <g transform="translate(1030 120) scale(1.5)">
         <g className="island-kite">
           <path d="M0 -17 14 0 0 18 -14 0 Z" fill="var(--accent)" stroke="var(--ink)" strokeWidth="2" />
           <path d="M0 -15 V16 M-12 0 H12" fill="none" stroke="var(--cream)" strokeWidth="1.5" />
@@ -312,6 +313,7 @@ export function IslandWideScene({ weather }: { weather: Weather }) {
       <rect data-sea="true" y="420" width="1440" height="480" fill="var(--sea)" />
       <path data-sea="true" className="island-wave island-wave-back" d={landscapeWavePath(420, 11)} fill="var(--sky-deep)" opacity="0.58" />
       <path data-sea="true" className="island-wave island-wave-front" d={landscapeWavePath(715, 13)} fill="var(--sea-deep)" opacity="0.42" />
+      <SeaSurface width={1440} height={900} horizon={420} />
       <g transform="translate(110 240) scale(.43)"><PersonalIslandArt campus /></g>
       <g transform="translate(1100 240) scale(.43)"><PersonalIslandArt campus={false} /></g>
       <ellipse cx="720" cy="641" rx="647" ry="223" fill="var(--foam)" />
@@ -366,6 +368,7 @@ export function IslandScene({ weather }: { weather: Weather }) {
       <path data-sea="true" className="island-wave island-wave-back" d={wavePath(240, 6)} fill="var(--sky-deep)" opacity="0.55" />
 
       <path data-sea="true" className="island-wave island-wave-front" d={wavePath(470, 7)} fill="var(--sea-deep)" opacity="0.45" />
+      <SeaSurface width={SCENE_WIDTH} height={SCENE_HEIGHT} horizon={240} />
       <g transform="translate(12 207) scale(.21)"><PersonalIslandArt campus /></g>
       <g transform="translate(259 208) scale(.21)"><PersonalIslandArt campus={false} /></g>
       <ellipse cx="180" cy="424" rx="176" ry="122" fill="var(--foam)" opacity="0.8" />

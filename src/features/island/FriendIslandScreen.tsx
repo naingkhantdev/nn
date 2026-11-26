@@ -14,13 +14,13 @@ import {
 } from '../feelings/feeling'
 import { useMinuteTick } from '../feelings/useMinuteTick'
 import { moodFor, readCare } from '../mochi/mochiMood'
-import { Mochi } from '../mochi/Mochi'
 import { WaterPlay } from './WaterPlay'
 import { usePageVisible } from './usePageVisible'
 import type { IslandVisit } from './islandRepository'
-import { SharedIsland } from './IslandScene'
 import { PlayfulMochi } from './PlayfulMochi'
 import { VisitScene } from './VisitScene'
+import { SharedIsland } from './IslandScene'
+import { SeaSurface } from './SeaSurface'
 
 import './island.css'
 
@@ -73,15 +73,18 @@ export function FriendIslandScreen({ own = false }: { own?: boolean }) {
     <main className={`island-screen${visible ? '' : ' island-paused'}`}>
       <div className={`campus-frame${sailing ? ' campus-by-sea' : ''}`}>
         <VisitScene campus={campus} />
+        <svg className="home-open-sea" viewBox="0 0 400 500" preserveAspectRatio="none" aria-hidden="true">
+          <SeaSurface width={400} height={500} horizon={0} />
+        </svg>
         <WaterPlay />
-        {(
-          <Link className="far-island-link" to="/between-islands" aria-label={copy.sharedIsland}>
-            <svg viewBox="-110 -44 220 90" aria-hidden="true">
-              <SharedIsland x={0} y={0} />
-            </svg>
-          </Link>
-        )}
-        <Link className="return-dock-link" to="/between-islands" aria-label={copy.sharedIsland} />
+        <Link className="far-island-link" to="/between-islands" aria-label={copy.sharedIsland}>
+          <svg viewBox="-110 -70 220 120" aria-hidden="true">
+            <SharedIsland x={0} y={0} />
+          </svg>
+        </Link>
+        <div className="home-docked-boat" aria-hidden="true">
+          <svg viewBox="0 0 140 116"><g className="home-boat-rock"><BoatArt /></g></svg>
+        </div>
         {visitFailed && (
           <div className="visit-lantern-warning" role="status" aria-label={copy.island.visitOffline}>
             <svg viewBox="0 0 40 52" aria-hidden="true">
@@ -93,7 +96,7 @@ export function FriendIslandScreen({ own = false }: { own?: boolean }) {
             <span className="visually-hidden">{copy.island.visitOffline}</span>
           </div>
         )}
-        {(own || otherIsHere) && <div className="campus-resident">
+        {(own || otherIsHere) && <div className={`campus-resident${own && sailing ? ' campus-arriving' : ''}`}>
           <PlayfulMochi together={otherIsHere}
             bow={campus}
             expression={expression}
@@ -102,14 +105,10 @@ export function FriendIslandScreen({ own = false }: { own?: boolean }) {
           />
           {currentActivity && <small>{copy.activities.label[currentActivity]}</small>}
         </div>}
-        {((own && otherIsHere) || !own) && <div className="campus-visitor">
+        {((own && otherIsHere) || !own) && <div className={`campus-visitor${!own && sailing ? ' campus-arriving' : ''}`}>
           <PlayfulMochi together={otherIsHere} bow={!campus} expression={visitorExpression} size={60} label={visitor} />
         </div>}
       </div>
-      {sailing && <div className="visit-crossing" aria-hidden="true">
-        <div className="visit-ferry">
-          <svg viewBox="0 0 140 110" width="140" height="110"><BoatArt><Mochi bow={island.isNoe()} expression={own ? expression : visitorExpression} size={57} label={own ? host : visitor} /></BoatArt></svg>    </div>
-      </div>}
     </main>
   )
 }

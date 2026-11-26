@@ -1,5 +1,5 @@
-import { BoatArt } from './BoatArt'
 import { useId } from 'react'
+import { SeaSurface } from './SeaSurface'
 
 /** The jetty, boat and characters share a fixed coordinate system. */
 export function VisitScene({ campus }: { campus: boolean }) {
@@ -38,14 +38,14 @@ export function VisitScene({ campus }: { campus: boolean }) {
       <g data-sea="true" className="island-horizon-wave" fill="none" stroke="var(--foam)" strokeWidth="1.5" opacity=".5">
         <path d="M-20 158q40 -6 80 0t80 0t80 0t80 0t120 0 M-20 171q40 -6 80 0t80 0t80 0t80 0t120 0" />
       </g>
-      <g className="island-horizon-wave" stroke="var(--foam)" strokeWidth="1.2" fill="none" opacity=".4">
-        <path d="M18 218q15 -4 30 0m39 -21q20 -4 40 0m151 18q17 -3 34 0m12 132q20 -5 39 0M22 369q19 -4 38 0m91 77q25 -4 50 0m76 -21q22 -4 44 0" />
-      </g>
+      <SeaSurface width={400} height={500} horizon={153} />
+      <ellipse cx="200" cy="320" rx="203" ry="74" fill="var(--sky-deep)" opacity=".22" />
+      <ellipse className="home-shore-surf" data-sea="true" cx="200" cy="320" rx="196" ry="67" fill="none" stroke="var(--foam)" strokeWidth="3" opacity=".65" />
       <PersonalIslandArt campus={campus} />
       <g stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round">
         <path d="m135 331 -47 65 22 7 54 -66Z" fill="var(--sand)" />
         <path d="m120 354 25 7 m-36 9 24 7 m-35 8 24 7" fill="none" />
-        <g transform="translate(36 346) scale(.7)"><BoatArt /></g>
+        <path d="M94 412q13 -4 13 -17" fill="none" stroke="var(--ink-soft)" strokeWidth="1.5" />
       </g>
     </svg>
   )
