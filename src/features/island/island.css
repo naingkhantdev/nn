@@ -6,6 +6,9 @@
 }
 
 .island-frame {
+  container-type: inline-size;
+  --shared-dock-x: -26cqw;
+  --shared-dock-y: 44cqw;
   position: absolute;
   inset: auto 0 0;
   width: min(100vw, calc(100dvh * 9 / 16));
@@ -543,14 +546,15 @@
 .far-island-link {
   position: absolute;
   z-index: 4;
-  left: 1%;
+  left: 50%;
   top: 22%;
   width: 23%;
-  height: 12%;
+  height: 10%;
   min-width: 44px;
   min-height: 44px;
   display: grid;
   place-items: center;
+  transform: translateX(-50%);
   border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
 }
@@ -564,6 +568,43 @@
   pointer-events: none;
 }
 .home-docked-boat svg { display: block; width: 100%; overflow: visible; }
+.shared-arrival-boat {
+  position: absolute;
+  z-index: 3;
+  left: 51.39%;
+  top: 55%;
+  width: 28cqw;
+  pointer-events: none;
+  transform: translate(-50%, -50%) translate(var(--shared-dock-x), var(--shared-dock-y));
+}
+.shared-arrival-boat svg { display: block; width: 100%; overflow: visible; }
+@media (min-width: 700px) and (orientation: landscape) {
+  .island-frame { --shared-dock-x: -25cqw; --shared-dock-y: 13cqw; }
+  .shared-arrival-boat { left: 46.9%; top: 63%; width: 14cqw; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shared-arrival-boat { animation: shared-boat-dock 3.6s ease-out both; }
+  .shared-arriving { animation: shared-disembark 3.6s linear both; }
+  .shared-arriving .island-mochi-name,
+  .shared-arriving .island-mochi-activity { animation: home-arrival-label 3.6s both; }
+}
+@keyframes shared-boat-dock {
+  0% { transform: translate(-50%, -50%) translate(calc(var(--shared-dock-x) - 65cqw), calc(var(--shared-dock-y) + 10cqw)); }
+  45%, 100% { transform: translate(-50%, -50%) translate(var(--shared-dock-x), var(--shared-dock-y)); }
+}
+@keyframes shared-disembark {
+  0% { transform: translate(-50%, -50%) translate(calc(var(--shared-dock-x) - 65cqw), calc(var(--shared-dock-y) + 7cqw)) scale(.75); animation-timing-function: ease-out; }
+  45%, 50% { transform: translate(-50%, -50%) translate(var(--shared-dock-x), calc(var(--shared-dock-y) - 3cqw)) scale(.75); }
+  60% { transform: translate(-50%, -50%) translate(calc(var(--shared-dock-x) + 3cqw), calc(var(--shared-dock-y) - 12cqw)) scale(.85); }
+  70% { transform: translate(-50%, -50%) translate(calc(var(--shared-dock-x) + 6cqw), calc(var(--shared-dock-y) - 13cqw)) scale(.9); }
+  82% { transform: translate(-50%, -50%) translate(-10cqw, 10cqw) rotate(-3deg); }
+  92% { transform: translate(-50%, -50%) translate(-3cqw, 2cqw) rotate(3deg); }
+  100% { transform: translate(-50%, -50%); }
+}
+.island-paused .shared-arrival-boat,
+.island-paused .shared-arriving,
+.island-paused .shared-arriving .island-mochi-name,
+.island-paused .shared-arriving .island-mochi-activity { animation-play-state: paused; }
 .far-island-link:focus-visible {
   outline: 3px dashed var(--accent-ink);
   outline-offset: 2px;

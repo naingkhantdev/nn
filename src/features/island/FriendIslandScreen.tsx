@@ -77,7 +77,7 @@ export function FriendIslandScreen({ own = false }: { own?: boolean }) {
           <SeaSurface width={400} height={500} horizon={0} />
         </svg>
         <WaterPlay />
-        <Link className="far-island-link" to="/between-islands" aria-label={copy.sharedIsland}>
+        <Link className="far-island-link" to="/between-islands" state={{ sailing: true }} aria-label={copy.sharedIsland}>
           <svg viewBox="-110 -70 220 120" aria-hidden="true">
             <SharedIsland x={0} y={0} />
           </svg>

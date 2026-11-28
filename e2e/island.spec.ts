@@ -1,6 +1,39 @@
 import { copy } from '../src/copy/copy'
 import { expect, test } from '@playwright/test'
 
+for (const home of ['/', '/visit']) {
+  test(`boat lands on the shared island from ${home}`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto(`${home}?e2e`)
+    await page.getByRole('link', { name: copy.sharedIsland }).click()
+    await expect(page).toHaveURL(url => url.pathname === '/between-islands')
+    const mochi = page.locator('.shared-arriving')
+    const boat = page.locator('.shared-arrival-boat')
+    await expect(boat).toBeVisible()
+    await expect(mochi).toHaveCSS('animation-name', 'shared-disembark')
+    await page.locator('.shared-by-sea').evaluate(el => {
+      for (const animation of el.getAnimations({ subtree: true })) {
+        if (animation instanceof CSSAnimation && ['shared-disembark', 'shared-boat-dock'].includes(animation.animationName)) {
+          animation.pause()
+          animation.currentTime = 1700
+        }
+      }
+    })
+    await page.screenshot({ path: `test-results/shared-landing-${home === '/' ? 'own' : 'friend'}.png` })
+    await page.locator('.shared-by-sea').evaluate(el => {
+      for (const animation of el.getAnimations({ subtree: true })) {
+        if (animation.effect?.getTiming().iterations === 1) animation.finish()
+      }
+    })
+    await expect(mochi).toBeVisible()
+    await page.screenshot({ path: `test-results/shared-landed-${home === '/' ? 'own' : 'friend'}.png` })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await expect(mochi).toHaveCSS('animation-name', 'none')
+    await expect(boat).toHaveCSS('animation-name', 'none')
+    await expect(page.getByRole('button', { name: copy.places.starJar })).toBeVisible()
+  })
+}
+
 // The island at the smallest and largest phone sizes, signed in through the
 // e2e-only fake session (?e2e, only honoured in builds made with --mode e2e).
 for (const size of [

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { copy } from '../../copy/copy'
 import { useClock } from '../../core/clock'
 import type { Features } from '../../core/members'
@@ -21,6 +21,7 @@ import {
   shouldOfferPush,
 } from '../settings/NotificationPrompt'
 import { PlayfulMochi } from './PlayfulMochi'
+import { BoatArt } from './BoatArt'
 import { IslandScene, IslandWideScene } from './IslandScene'
 import { WaterPlay } from './WaterPlay'
 import { usePageVisible } from './usePageVisible'
@@ -42,6 +43,7 @@ const pct = (value: number, total: number) => `${(value / total) * 100}%`
 
 export function IslandScreen({ features }: { features: Features }) {
   const navigate = useNavigate()
+  const sailing = useLocation().state?.sailing === true
   const [activeSulks, setActiveSulks] = useState<IslandSulk[]>([])
   const weather = weatherForSulks(features.sulkEnabled ? activeSulks : [], useClock()())
   const visible = usePageVisible()
@@ -89,11 +91,14 @@ export function IslandScreen({ features }: { features: Features }) {
   const treat = treats[0] ?? null
   return (
     <div className={`island-screen${visible ? '' : ' island-paused'}`}>
-      <div className="island-frame">
+      <div className={`island-frame${sailing ? ' shared-by-sea' : ''}`}>
         {travelFailed && <p role="status">{copy.island.visitOffline}</p>}
         <IslandScene weather={weather} />
         <IslandWideScene weather={weather} />
         <WaterPlay />
+        {sailing && <div className="shared-arrival-boat" aria-hidden="true">
+          <svg viewBox="0 0 140 116"><g className="home-boat-rock"><BoatArt /></g></svg>
+        </div>}
 
 
         {(friendVisit?.visitedAt || myVisit?.visitedAt) && (
@@ -111,7 +116,7 @@ export function IslandScreen({ features }: { features: Features }) {
           </details>
         )}
         <div
-          className="island-mochi island-mochi-you"
+          className={`island-mochi island-mochi-you${sailing ? ' shared-arriving' : ''}`}
           style={{ left: pct(185, SCENE_WIDTH), top: pct(352, SCENE_HEIGHT) }}
         >
           <PlayfulMochi together={friendVisit?.destination === 'shared'}
